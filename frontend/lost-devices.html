@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Yo'qolgan qurilmalar — DeviceGuard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/theme.css"/>
+  <script src="https://unpkg.com/lucide@0.383.0/dist/umd/lucide.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+</head>
+<body class="bg-gray-950 text-white min-h-screen">
+<div id="navbar" data-prefix=""></div>
+
+<div class="max-w-5xl mx-auto px-4 py-8">
+  <!-- Header -->
+  <div class="text-center mb-8">
+    <div class="inline-flex items-center gap-2 bg-red-900/20 border border-red-700/30 text-red-400 text-xs px-4 py-1.5 rounded-full mb-4">
+      <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>
+      Yo'qolgan qurilmalar bazasi
+    </div>
+    <h1 class="text-3xl font-bold mb-2">Yo'qolgan qurilmalar</h1>
+    <p class="text-gray-400 text-sm max-w-md mx-auto">
+      Kimning qurilmasi yo'qolganini ko'ring. Topgan bo'lsangiz — egasiga xabar yuboring va mukofot oling.
+    </p>
+  </div>
+
+  <!-- Stats -->
+  <div id="statsBar" class="flex items-center justify-between mb-5 hidden">
+    <span id="totalCount" class="text-sm text-gray-400"></span>
+    <div class="flex gap-2">
+      <div class="relative">
+        <i data-lucide="search" class="w-3.5 h-3.5 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2"></i>
+        <input id="searchInput" placeholder="Qidirish..." oninput="filterDevices()"
+          class="bg-gray-900 border border-gray-800 rounded-xl pl-9 pr-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition w-48"/>
+      </div>
+      <select id="catFilter" onchange="filterDevices()"
+        class="bg-gray-900 border border-gray-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition">
+        <option value="">Barcha kategoriya</option>
+        <option value="phone">📱 Telefon</option>
+        <option value="laptop">💻 Noutbuk</option>
+        <option value="tablet">🔲 Planshet</option>
+        <option value="watch">⌚ Soat</option>
+        <option value="headphones">🎧 Quloqchin</option>
+        <option value="camera">📷 Kamera</option>
+        <option value="other">📦 Boshqa</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div id="loading" class="text-center py-20 text-gray-600">
+    <i data-lucide="loader-2" class="w-8 h-8 mx-auto animate-spin mb-3"></i>
+    <p class="text-sm">Yuklanmoqda...</p>
+  </div>
+
+  <!-- Empty -->
+  <div id="empty" class="hidden text-center py-20">
+    <i data-lucide="search-check" class="w-16 h-16 mx-auto text-gray-700 mb-4"></i>
+    <p class="text-gray-400 font-medium">Hozircha yo'qolgan qurilmalar yo'q</p>
+    <p class="text-gray-600 text-sm mt-1">Barcha qurilmalar sog'-salomat! 🎉</p>
+  </div>
+
+  <!-- Grid -->
+  <div id="deviceGrid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+  <div id="noMatch" class="hidden text-center py-10 text-gray-500 text-sm">Mos qurilma topilmadi</div>
+</div>
+
+<!-- Contact Modal -->
+<div id="contactModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 max-w-sm w-full">
+    <div class="flex items-center justify-between mb-4">
+      <div class="font-semibold">Egasiga murojaat</div>
+      <button onclick="closeContactModal()" class="text-gray-500 hover:text-white">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+    </div>
+    <div id="contactDeviceInfo" class="bg-gray-800 rounded-xl p-3 mb-4 text-sm"></div>
+    <div id="contactNotAuth" class="hidden">
+      <p class="text-gray-400 text-sm mb-4 text-center">Murojaat qilish uchun avval kiring</p>
+      <a href="login.html" class="block w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-xl text-sm font-semibold text-center transition">
+        Kirish / Ro'yxatdan o'tish
+      </a>
+    </div>
+    <div id="contactAuth" class="hidden">
+      <textarea id="firstMessage" rows="3" placeholder="Xabaringizni yozing... (Topgan joyi, holati va h.k.)"
+        class="w-full bg-gray-800 border border-gray-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition resize-none mb-3"></textarea>
+      <button onclick="startChat()" id="startChatBtn"
+        class="w-full py-3 bg-green-600 hover:bg-green-700 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2">
+        <i data-lucide="message-circle" class="w-4 h-4"></i>
+        Chat boshlash
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('navbar').innerHTML = buildNavbar({ prefix: '' });
+lucide.createIcons();
+updateNavbar();
+applyTranslations();
+
+const CAT_ICON = { phone:'smartphone', laptop:'laptop', tablet:'tablet', watch:'watch', headphones:'headphones', camera:'camera', other:'package' };
+const CAT_LABEL = { phone:'Telefon', laptop:'Noutbuk', tablet:'Planshet', watch:'Soat', headphones:'Quloqchin', camera:'Kamera', other:'Boshqa' };
+
+let allDevices = [];
+let selectedDeviceId = null;
+
+function timeAgo(dateStr) {
+  if (!dateStr) return '';
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const d = Math.floor(diff / 86400000);
+  if (d === 0) return 'Bugun';
+  if (d === 1) return 'Kecha';
+  return `${d} kun oldin`;
+}
+
+async function loadDevices() {
+  try {
+    const res = await fetch(`${API}/devices/public/lost`);
+    if (!res.ok) throw new Error();
+    allDevices = await res.json();
+    document.getElementById('loading').classList.add('hidden');
+    if (!allDevices.length) { document.getElementById('empty').classList.remove('hidden'); return; }
+    document.getElementById('statsBar').classList.remove('hidden');
+    document.getElementById('deviceGrid').classList.remove('hidden');
+    filterDevices();
+  } catch {
+    document.getElementById('loading').innerHTML = '<p class="text-red-400 text-sm">Server bilan ulanib bo\'lmadi</p>';
+  }
+}
+
+function filterDevices() {
+  const q = (document.getElementById('searchInput').value || '').toLowerCase();
+  const cat = document.getElementById('catFilter').value;
+  let list = allDevices;
+  if (cat) list = list.filter(d => d.category === cat);
+  if (q) list = list.filter(d =>
+    d.name.toLowerCase().includes(q) ||
+    d.brand.toLowerCase().includes(q) ||
+    d.model.toLowerCase().includes(q) ||
+    (d.last_location||'').toLowerCase().includes(q)
+  );
+  document.getElementById('totalCount').textContent = `${allDevices.length} ta yo'qolgan qurilma`;
+  const grid = document.getElementById('deviceGrid');
+  const noMatch = document.getElementById('noMatch');
+  if (!list.length) { noMatch.classList.remove('hidden'); grid.classList.add('hidden'); return; }
+  noMatch.classList.add('hidden');
+  grid.classList.remove('hidden');
+  grid.innerHTML = list.map(renderCard).join('');
+  lucide.createIcons();
+}
+
+function renderCard(d) {
+  const icon = CAT_ICON[d.category] || 'package';
+  const ago = timeAgo(d.date_lost);
+  const isOwner = getUser()?.id === d.owner_id;
+  return `
+  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 hover:border-red-700/40 transition group">
+    <div class="flex items-start gap-3 mb-3">
+      <div class="w-11 h-11 bg-red-900/20 border border-red-700/30 rounded-xl flex items-center justify-center flex-shrink-0">
+        <i data-lucide="${icon}" class="w-5 h-5 text-red-400"></i>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="font-semibold text-sm leading-tight truncate">${d.name}</div>
+        <div class="text-gray-500 text-xs">${d.brand} · ${d.model}</div>
+      </div>
+      <span class="bg-red-900/40 border border-red-700/40 text-red-400 text-xs px-2 py-0.5 rounded-full flex-shrink-0">✗ Yo'qolgan</span>
+    </div>
+
+    <div class="space-y-1.5 text-xs text-gray-500 mb-4">
+      ${d.last_location ? `<div class="flex items-center gap-1.5"><i data-lucide="map-pin" class="w-3 h-3 text-gray-600"></i><span class="text-gray-400">${d.last_location}</span></div>` : ''}
+      ${d.color ? `<div class="flex items-center gap-1.5"><i data-lucide="palette" class="w-3 h-3 text-gray-600"></i>${d.color}</div>` : ''}
+      ${d.description ? `<div class="text-gray-500 line-clamp-2 italic">"${d.description}"</div>` : ''}
+      <div class="flex items-center justify-between pt-1">
+        <span class="text-gray-600">${CAT_LABEL[d.category] || d.category}</span>
+        <span class="text-gray-600">${ago}</span>
+      </div>
+    </div>
+
+    ${d.reward ? `
+    <div class="bg-yellow-900/20 border border-yellow-700/30 rounded-xl px-3 py-2 mb-3 flex items-center gap-2">
+      <i data-lucide="gift" class="w-3.5 h-3.5 text-yellow-400"></i>
+      <span class="text-yellow-400 font-semibold text-sm">$${d.reward} mukofot</span>
+      <span class="text-yellow-600 text-xs ml-auto">Topgan uchun</span>
+    </div>` : ''}
+
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-1.5 text-xs text-gray-500">
+        <div class="w-5 h-5 bg-gray-800 rounded-full flex items-center justify-center">
+          <i data-lucide="user" class="w-3 h-3"></i>
+        </div>
+        ${d.owner_name}
+      </div>
+      ${isOwner
+        ? `<span class="text-xs text-blue-400 px-2 py-1 bg-blue-900/20 rounded-lg">Sizning qurilmangiz</span>`
+        : `<button onclick="openContactModal('${d.id}', '${d.name}', '${d.brand}', '${d.reward || 0}')"
+            class="flex items-center gap-1.5 px-3 py-1.5 bg-green-600 hover:bg-green-700 rounded-xl text-xs font-semibold transition">
+            <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+            Murojaat
+          </button>`
+      }
+    </div>
+  </div>`;
+}
+
+function openContactModal(deviceId, name, brand, reward) {
+  selectedDeviceId = deviceId;
+  document.getElementById('contactDeviceInfo').innerHTML = `
+    <div class="font-semibold text-white">${name}</div>
+    <div class="text-gray-500 text-xs mt-0.5">${brand}</div>
+    ${reward > 0 ? `<div class="text-yellow-400 text-xs mt-1">💰 $${reward} mukofot</div>` : ''}
+  `;
+  const isAuth = !!getToken();
+  document.getElementById('contactNotAuth').classList.toggle('hidden', isAuth);
+  document.getElementById('contactAuth').classList.toggle('hidden', !isAuth);
+  document.getElementById('contactModal').classList.remove('hidden');
+  lucide.createIcons();
+}
+
+function closeContactModal() {
+  document.getElementById('contactModal').classList.add('hidden');
+  selectedDeviceId = null;
+}
+
+async function startChat() {
+  if (!selectedDeviceId) return;
+  const btn = document.getElementById('startChatBtn');
+  const msg = document.getElementById('firstMessage').value.trim();
+  btn.disabled = true;
+  btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Yuklanmoqda...';
+  lucide.createIcons();
+  try {
+    const res = await fetch(`${API}/chat/rooms?device_id=${selectedDeviceId}`, {
+      method: 'POST', headers: authHeaders()
+    });
+    if (!res.ok) { const e = await res.json(); alert(e.detail || 'Xato'); btn.disabled = false; return; }
+    const { room_id } = await res.json();
+
+    // Birinchi xabar yuborish
+    if (msg) {
+      await fetch(`${API}/chat/rooms/${room_id}/messages`, {
+        method: 'POST', headers: authHeaders(),
+        body: JSON.stringify({ content: msg })
+      });
+    }
+    location.href = `dashboard/chat.html?room=${room_id}`;
+  } catch { alert("Server bilan ulanib bo'lmadi"); btn.disabled = false; }
+  btn.innerHTML = '<i data-lucide="message-circle" class="w-4 h-4"></i> Chat boshlash';
+  lucide.createIcons();
+}
+
+loadDevices();
+</script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DeviceGuard — Qurilmalaringizni himoya qiling</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/theme.css"/>
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+</head>
+<body class="min-h-screen">
+<div id="navbar" data-prefix=""></div>
+
+<!-- HERO -->
+<section class="max-w-5xl mx-auto px-4 py-16 text-center">
+  <div class="inline-flex items-center gap-2 text-blue-400 text-xs px-4 py-1.5 rounded-full mb-6" style="background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.3)">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    <span data-t="heroTag">Qurilmalaringizni himoya qiling</span>
+  </div>
+  <h1 class="text-4xl md:text-5xl font-bold mb-4 leading-tight" style="color:var(--dg-text)">
+    <span data-t="heroTitle1">Qurilmangiz yo'qolsa —</span><br/>
+    <span class="text-blue-500" data-t="heroTitle2">biz topishga yordam beramiz</span>
+  </h1>
+  <p class="text-base max-w-xl mx-auto mb-8" style="color:var(--dg-text3)" data-t="heroDesc">
+    Telefon, noutbuk va boshqa qurilmalaringizni ro'yxatga oling. Yo'qolsa — serial raqam bo'yicha kimlar topa olsin.
+  </p>
+  <div class="flex gap-3 justify-center flex-wrap">
+    <a href="register.html" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-sm transition" data-t="heroCta">Bepul boshlash →</a>
+    <a href="search.html" class="px-6 py-3 rounded-xl font-semibold text-sm transition" style="border:1px solid var(--dg-border);color:var(--dg-text3)" data-t="heroSearch">Qurilma qidirish</a>
+  </div>
+  <div class="grid grid-cols-3 gap-6 max-w-sm mx-auto mt-12">
+    <div><div class="text-2xl font-bold text-blue-400">3</div><div class="text-xs mt-0.5" style="color:var(--dg-text4)" data-t="statFree">Bepul qurilma</div></div>
+    <div><div class="text-2xl font-bold text-yellow-400">10</div><div class="text-xs mt-0.5" style="color:var(--dg-text4)" data-t="statPro">PRO qurilma</div></div>
+    <div><div class="text-2xl font-bold text-green-400">$4.99</div><div class="text-xs mt-0.5" style="color:var(--dg-text4)" data-t="statPrice">PRO/oy</div></div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="max-w-5xl mx-auto px-4 py-12">
+  <h2 class="text-2xl font-bold text-center mb-8" style="color:var(--dg-text)" data-t="howTitle">Qanday ishlaydi?</h2>
+  <div class="grid md:grid-cols-3 gap-4">
+    <div class="rounded-2xl p-5" style="background:var(--dg-surface);border:1px solid var(--dg-border)">
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style="background:rgba(59,130,246,0.15)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      </div>
+      <h3 class="font-semibold mb-1 text-sm" style="color:var(--dg-text)" data-t="step1Title">1. Qurilmani ro'yxatga oling</h3>
+      <p class="text-xs" style="color:var(--dg-text3)" data-t="step1Desc">Serial raqam, IMEI va boshqa ma'lumotlarni kiritib, qurilmangizni himoya qiling.</p>
+    </div>
+    <div class="rounded-2xl p-5" style="background:var(--dg-surface);border:1px solid var(--dg-border)">
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style="background:rgba(239,68,68,0.15)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      </div>
+      <h3 class="font-semibold mb-1 text-sm" style="color:var(--dg-text)" data-t="step2Title">2. Yo'qolsa — belgilang</h3>
+      <p class="text-xs" style="color:var(--dg-text3)" data-t="step2Desc">Qurilmangiz yo'qolsa bir tugma bilan "Yo'qolgan" deb belgilang va mukofot qo'ying.</p>
+    </div>
+    <div class="rounded-2xl p-5" style="background:var(--dg-surface);border:1px solid var(--dg-border)">
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style="background:rgba(34,197,94,0.15)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+      <h3 class="font-semibold mb-1 text-sm" style="color:var(--dg-text)" data-t="step3Title">3. Kimlar topishi mumkin</h3>
+      <p class="text-xs" style="color:var(--dg-text3)" data-t="step3Desc">Topgan kishi serial raqam bo'yicha tekshirsa — egasini topadi va mukofot oladi.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" class="max-w-3xl mx-auto px-4 py-12">
+  <h2 class="text-2xl font-bold text-center mb-2" style="color:var(--dg-text)" data-t="pricingTitle">Narxlar</h2>
+  <p class="text-center text-sm mb-8" style="color:var(--dg-text3)" data-t="pricingDesc">Bepul boshlang, kerak bo'lsa yangilang</p>
+  <div class="grid md:grid-cols-2 gap-4">
+    <div class="rounded-2xl p-6" style="background:var(--dg-surface);border:1px solid var(--dg-border)">
+      <div class="text-xs font-medium uppercase tracking-wider mb-2" style="color:var(--dg-text4)" data-t="freePlan">Bepul</div>
+      <div class="text-3xl font-bold mb-1" style="color:var(--dg-text)">$0 <span class="text-base font-normal" style="color:var(--dg-text4)">/oy</span></div>
+      <ul class="space-y-2 my-5 text-sm" style="color:var(--dg-text2)">
+        <li class="flex items-center gap-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span data-t="freeF1">3 ta qurilma</span></li>
+        <li class="flex items-center gap-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span data-t="freeF2">Yo'qolgan belgilash</span></li>
+        <li class="flex items-center gap-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span data-t="freeF3">Ommaviy qidiruv</span></li>
+      </ul>
+      <a href="register.html" class="block text-center py-2.5 rounded-xl text-sm font-semibold transition" style="border:1px solid var(--dg-border);color:var(--dg-text3)" data-t="startFree">Boshlash</a>
+    </div>
+    <div class="rounded-2xl p-6 relative" style="background:linear-gradient(to bottom,rgba(30,64,175,0.2),var(--dg-surface));border:1px solid rgba(59,130,246,0.4)">
+      <div class="absolute -top-2.5 right-4 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full" data-t="popularBadge">MASHHUR</div>
+      <div class="text-xs font-medium uppercase tracking-wider mb-2 text-blue-400" data-t="proPlan">PRO</div>
+      <div class="text-3xl font-bold mb-1" style="color:var(--dg-text)">$4.99 <span class="text-base font-normal" style="color:var(--dg-text4)">/oy</span></div>
+      <ul class="space-y-2 my-5 text-sm" style="color:var(--dg-text2)">
+        <li class="flex items-center gap-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><strong data-t="proF1">10 ta qurilma</strong></li>
+        <li class="flex items-center gap-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span data-t="proF2">Yo'qolgan belgilash</span></li>
+        <li class="flex items-center gap-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span data-t="proF3">Ommaviy qidiruv</span></li>
+        <li class="flex items-center gap-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span data-t="proF4">Telegram qo'llab-quvvatlash</span></li>
+      </ul>
+      <a href="register.html" class="block text-center py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold transition" data-t="getPro">PRO olish</a>
+    </div>
+  </div>
+</section>
+
+<footer class="border-t py-6 text-center text-xs" style="border-color:var(--dg-border);color:var(--dg-text4)">
+  <div class="flex justify-center gap-4 mb-2">
+    <a href="search.html" class="hover:text-blue-400 transition" data-t="footerSearch">Qurilma qidirish</a>
+    <a href="register.html" class="hover:text-blue-400 transition" data-t="footerReg">Ro'yxatdan o'tish</a>
+    <a href="admin-login.html" class="hover:text-blue-400 transition" data-t="footerAdmin">Admin</a>
+  </div>
+  © 2025 DeviceGuard
+</footer>
+
+<script>
+// Add translations for index page
+const indexT = {
+  uz: { heroTag:"Qurilmalaringizni himoya qiling", heroTitle1:"Qurilmangiz yo'qolsa —", heroTitle2:"biz topishga yordam beramiz", heroDesc:"Telefon, noutbuk va boshqa qurilmalaringizni ro'yxatga oling.", heroCta:"Bepul boshlash →", heroSearch:"Qurilma qidirish", statFree:"Bepul qurilma", statPro:"PRO qurilma", statPrice:"PRO/oy", howTitle:"Qanday ishlaydi?", step1Title:"1. Qurilmani ro'yxatga oling", step1Desc:"Serial raqam va IMEI kiritib himoya qiling.", step2Title:"2. Yo'qolsa — belgilang", step2Desc:"Bir tugma bilan yo'qolgan deb belgilang, mukofot qo'ying.", step3Title:"3. Kimlar topishi mumkin", step3Desc:"Topgan kishi serial raqam bo'yicha egasini topadi.", pricingTitle:"Narxlar", pricingDesc:"Bepul boshlang, kerak bo'lsa yangilang", freePlan:"Bepul", proPlan:"PRO", freeF1:"3 ta qurilma", freeF2:"Yo'qolgan belgilash", freeF3:"Ommaviy qidiruv", proF1:"10 ta qurilma", proF2:"Yo'qolgan belgilash", proF3:"Ommaviy qidiruv", proF4:"Telegram qo'llab-quvvatlash", startFree:"Boshlash", getPro:"PRO olish", popularBadge:"MASHHUR", footerSearch:"Qurilma qidirish", footerReg:"Ro'yxatdan o'tish", footerAdmin:"Admin" },
+  en: { heroTag:"Protect your devices", heroTitle1:"If your device is lost —", heroTitle2:"we help you find it", heroDesc:"Register your phones, laptops and more. If lost — anyone can find the owner by serial number.", heroCta:"Start Free →", heroSearch:"Search Device", statFree:"Free devices", statPro:"PRO devices", statPrice:"PRO/mo", howTitle:"How it works", step1Title:"1. Register your device", step1Desc:"Enter serial number and IMEI to protect your device.", step2Title:"2. Mark as lost", step2Desc:"One click to mark as lost and set a reward.", step3Title:"3. Anyone can find it", step3Desc:"Finder can look up the owner by serial number.", pricingTitle:"Pricing", pricingDesc:"Start free, upgrade anytime", freePlan:"Free", proPlan:"PRO", freeF1:"3 devices", freeF2:"Mark as lost", freeF3:"Public search", proF1:"10 devices", proF2:"Mark as lost", proF3:"Public search", proF4:"Telegram support", startFree:"Get Started", getPro:"Get PRO", popularBadge:"POPULAR", footerSearch:"Search Devices", footerReg:"Register", footerAdmin:"Admin" },
+  ru: { heroTag:"Защитите свои устройства", heroTitle1:"Если устройство потерялось —", heroTitle2:"мы поможем найти", heroDesc:"Зарегистрируйте телефоны, ноутбуки и другое. Если потеряется — любой сможет найти владельца.", heroCta:"Начать бесплатно →", heroSearch:"Найти устройство", statFree:"Бесплатных", statPro:"PRO устройств", statPrice:"PRO/мес", howTitle:"Как это работает", step1Title:"1. Зарегистрируйте устройство", step1Desc:"Введите серийный номер и IMEI для защиты.", step2Title:"2. Отметьте как потерянное", step2Desc:"Одна кнопка и устройство помечено, установите вознаграждение.", step3Title:"3. Кто угодно может найти", step3Desc:"Нашедший проверит серийный номер и найдёт владельца.", pricingTitle:"Цены", pricingDesc:"Начните бесплатно, обновите когда нужно", freePlan:"Бесплатно", proPlan:"PRO", freeF1:"3 устройства", freeF2:"Отметить как потерянное", freeF3:"Публичный поиск", proF1:"10 устройств", proF2:"Отметить как потерянное", proF3:"Публичный поиск", proF4:"Поддержка в Telegram", startFree:"Начать", getPro:"Получить PRO", popularBadge:"ПОПУЛЯРНО", footerSearch:"Поиск устройств", footerReg:"Регистрация", footerAdmin:"Админ" }
+};
+// Merge with global T
+Object.keys(indexT).forEach(lang => { if(T[lang]) Object.assign(T[lang], indexT[lang]); });
+
+document.getElementById('navbar').innerHTML = buildNavbar({ prefix: '' });
+updateNavbar();
+applyTranslations();
+if (window.lucide) lucide.createIcons();
+
+if (getToken()) {
+  const btns = document.querySelector('.flex.gap-3.justify-center');
+  if (btns) btns.innerHTML = `
+    <a href="dashboard/index.html" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-sm transition">Dashboard →</a>
+    <a href="search.html" class="px-6 py-3 rounded-xl font-semibold text-sm transition" style="border:1px solid var(--dg-border);color:var(--dg-text3)">Qurilma qidirish</a>`;
+}
+</script>
+</body>
+</html>

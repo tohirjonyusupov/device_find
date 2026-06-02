@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DeviceGuard — Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/theme.css"/>
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+</head>
+<body class="bg-gray-950 text-white min-h-screen flex items-center justify-center px-4 py-10">
+<div class="w-full max-w-sm">
+  <div id="topbar" class="mb-6"></div>
+
+  <div class="text-center mb-6">
+    <div class="flex items-center justify-center gap-2 font-bold text-xl mb-1">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      DeviceGuard
+    </div>
+    <p class="text-gray-500 text-sm" data-i18n="loginSub">Hisobingizga kiring</p>
+  </div>
+
+  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+    <div id="errMsg" class="hidden bg-red-900/40 border border-red-700/50 text-red-300 text-sm rounded-xl px-4 py-3 mb-4"></div>
+    <form onsubmit="handleLogin(event)" class="space-y-3">
+      <div>
+        <label class="text-xs text-gray-500 mb-1 block" data-i18n="email">Email</label>
+        <input id="email" type="email" required autocomplete="email" placeholder="siz@email.com"
+          class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition"/>
+      </div>
+      <div>
+        <label class="text-xs text-gray-500 mb-1 block" data-i18n="password">Parol</label>
+        <div class="relative">
+          <input id="password" type="password" required autocomplete="current-password" placeholder="••••••••"
+            class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition pr-10"/>
+          <button type="button" onclick="togglePass()" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 p-1">
+            <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <button type="submit" id="loginBtn"
+        class="w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-xl text-sm font-semibold transition mt-1" data-i18n="loginBtn">
+        Kirish
+      </button>
+    </form>
+    <p class="text-center text-gray-500 text-xs mt-4">
+      <span data-i18n="noAccount">Hisobingiz yo'qmi?</span>
+      <a href="register.html" class="text-blue-400 hover:underline ml-1" data-i18n="regBtn">Ro'yxatdan o'tish</a>
+    </p>
+  </div>
+  <p class="text-center mt-3">
+    <a href="admin-login.html" class="text-gray-600 hover:text-gray-400 text-xs">Admin →</a>
+  </p>
+</div>
+
+<script>
+// Build minimal topbar with lang+theme
+document.getElementById('topbar').innerHTML = `
+<div class="flex justify-end items-center gap-2">
+  <div class="lang-switcher">${['uz','en','ru'].map(l=>`<button onclick="setLang('${l}')" class="lang-btn ${l===getLang()?'active':''}">${l.toUpperCase()}</button>`).join('')}</div>
+  <button onclick="toggleTheme()" data-theme-icon class="nav-icon-btn theme-btn" title="Theme"></button>
+</div>`;
+
+applyTranslations();
+
+if (getToken()) location.href = 'dashboard/index.html';
+
+let eyeOpen = true;
+function togglePass() {
+  const inp = document.getElementById('password');
+  eyeOpen = !eyeOpen;
+  inp.type = eyeOpen ? 'password' : 'text';
+  document.getElementById('eyeIcon').innerHTML = eyeOpen
+    ? '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>'
+    : '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+}
+
+async function handleLogin(e) {
+  e.preventDefault();
+  const btn = document.getElementById('loginBtn');
+  const err = document.getElementById('errMsg');
+  btn.disabled = true; btn.textContent = '...';
+  err.classList.add('hidden');
+  try {
+    const res = await fetch(`${API}/auth/login`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: document.getElementById('email').value, password: document.getElementById('password').value })
+    });
+    const data = await res.json();
+    if (!res.ok) { err.textContent = data.detail || 'Email yoki parol xato'; err.classList.remove('hidden'); return; }
+    localStorage.setItem('dg_token', data.token);
+    localStorage.setItem('dg_user', JSON.stringify(data));
+    location.href = data.role === 'admin' ? 'dashboard/admin.html' : 'dashboard/index.html';
+  } catch { err.textContent = "Server bilan ulanib bo'lmadi (localhost:8000)"; err.classList.remove('hidden'); }
+  btn.disabled = false; btn.textContent = t('loginBtn');
+}
+</script>
+</body>
+</html>

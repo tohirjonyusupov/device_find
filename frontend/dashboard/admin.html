@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel — DeviceGuard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/theme.css"/>
+  <script src="https://unpkg.com/lucide@0.383.0/dist/umd/lucide.min.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/app.js"></script>
+</head>
+<body class="bg-gray-950 text-white min-h-screen">
+
+<!-- NAVBAR -->
+<nav class="border-b border-gray-800 px-6 py-4 sticky top-0 bg-gray-950/95 z-10">
+  <div class="max-w-7xl mx-auto flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <i data-lucide="shield-check" class="w-5 h-5 text-blue-500"></i>
+      <span class="font-bold">DeviceGuard</span>
+      <span class="bg-red-600 text-xs font-bold px-2 py-0.5 rounded-full">ADMIN</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <a href="index.html" class="text-gray-400 hover:text-white text-sm transition flex items-center gap-1">
+        <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard
+      </a>
+      <button onclick="logout()" class="text-gray-500 hover:text-red-400 text-sm transition">
+        <i data-lucide="log-out" class="w-4 h-4"></i>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<div class="max-w-7xl mx-auto px-6 py-8">
+
+  <!-- TABS -->
+  <div class="flex gap-2 mb-8 border-b border-gray-800 pb-0">
+    <button onclick="switchTab('payments')" id="tab-payments"
+      class="tab-btn px-5 py-2.5 text-sm font-medium border-b-2 -mb-px transition">
+      💳 To'lovlar
+    </button>
+    <button onclick="switchTab('users')" id="tab-users"
+      class="tab-btn px-5 py-2.5 text-sm font-medium border-b-2 -mb-px transition">
+      👥 Foydalanuvchilar
+    </button>
+    <button onclick="switchTab('stats')" id="tab-stats"
+      class="tab-btn px-5 py-2.5 text-sm font-medium border-b-2 -mb-px transition">
+      📊 Statistika
+    </button>
+  </div>
+
+  <!-- ── PAYMENTS TAB ── -->
+  <div id="tab-payments-content" class="tab-content hidden">
+
+    <!-- Filter -->
+    <div class="flex gap-2 mb-6">
+      <button onclick="loadPayments('')"    id="filter-all"      class="filter-btn px-4 py-2 rounded-xl text-sm font-medium transition">Barchasi</button>
+      <button onclick="loadPayments('pending')"  id="filter-pending"  class="filter-btn px-4 py-2 rounded-xl text-sm font-medium transition">⏳ Kutilmoqda</button>
+      <button onclick="loadPayments('approved')" id="filter-approved" class="filter-btn px-4 py-2 rounded-xl text-sm font-medium transition">✅ Tasdiqlangan</button>
+      <button onclick="loadPayments('rejected')" id="filter-rejected" class="filter-btn px-4 py-2 rounded-xl text-sm font-medium transition">❌ Rad etilgan</button>
+    </div>
+
+    <div id="paymentsLoading" class="text-center py-10 text-gray-600">
+      <i data-lucide="loader-2" class="w-6 h-6 mx-auto animate-spin"></i>
+    </div>
+    <div id="paymentsList" class="space-y-3"></div>
+  </div>
+
+  <!-- ── USERS TAB ── -->
+  <div id="tab-users-content" class="tab-content hidden">
+    <div id="usersLoading" class="text-center py-10 text-gray-600">
+      <i data-lucide="loader-2" class="w-6 h-6 mx-auto animate-spin"></i>
+    </div>
+    <div id="usersList" class="space-y-3"></div>
+  </div>
+
+  <!-- ── STATS TAB ── -->
+  <div id="tab-stats-content" class="tab-content hidden">
+    <div id="statsLoading" class="text-center py-10 text-gray-600">
+      <i data-lucide="loader-2" class="w-6 h-6 mx-auto animate-spin"></i>
+    </div>
+    <div id="statsContent" class="hidden">
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5">
+          <div class="text-gray-500 text-xs mb-1">Jami foydalanuvchilar</div>
+          <div id="stat-total-users" class="text-3xl font-bold">—</div>
+        </div>
+        <div class="bg-gray-900 border border-yellow-700/30 rounded-2xl p-5">
+          <div class="text-gray-500 text-xs mb-1">PRO foydalanuvchilar</div>
+          <div id="stat-pro-users" class="text-3xl font-bold text-yellow-400">—</div>
+        </div>
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5">
+          <div class="text-gray-500 text-xs mb-1">FREE foydalanuvchilar</div>
+          <div id="stat-free-users" class="text-3xl font-bold text-gray-400">—</div>
+        </div>
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5">
+          <div class="text-gray-500 text-xs mb-1">Jami qurilmalar</div>
+          <div id="stat-total-devices" class="text-3xl font-bold text-blue-400">—</div>
+        </div>
+        <div class="bg-gray-900 border border-yellow-700/30 rounded-2xl p-5">
+          <div class="text-gray-500 text-xs mb-1">Kutilayotgan to'lovlar</div>
+          <div id="stat-pending" class="text-3xl font-bold text-yellow-400">—</div>
+        </div>
+        <div class="bg-gray-900 border border-green-700/30 rounded-2xl p-5">
+          <div class="text-gray-500 text-xs mb-1">Taxminiy daromad</div>
+          <div id="stat-revenue" class="text-2xl font-bold text-green-400">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Review Modal -->
+<div id="reviewModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 max-w-md w-full">
+    <h2 class="text-lg font-bold mb-1" id="modalTitle">To'lovni ko'rib chiqish</h2>
+    <p class="text-gray-400 text-sm mb-4" id="modalUser"></p>
+    <div id="modalNote" class="bg-gray-800 rounded-xl p-3 mb-4 text-sm text-gray-300 hidden"></div>
+    <textarea id="adminNote" rows="2" placeholder="Admin izohi (ixtiyoriy)"
+      class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition resize-none mb-4"></textarea>
+    <div class="flex gap-3">
+      <button onclick="closeModal()" class="flex-1 py-2.5 border border-gray-700 rounded-xl text-sm text-gray-400 hover:text-white transition">Bekor qilish</button>
+      <button onclick="reviewPayment('rejected')" class="flex-1 py-2.5 bg-red-700 hover:bg-red-800 rounded-xl text-sm font-semibold transition">❌ Rad etish</button>
+      <button onclick="reviewPayment('approved')" class="flex-1 py-2.5 bg-green-600 hover:bg-green-700 rounded-xl text-sm font-semibold transition">✅ Tasdiqlash</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  lucide.createIcons();
+  
+  let currentRequestId = null;
+
+  if (!getToken()) window.location.href = '../login.html';
+
+  function authHeaders() {
+    return { 'Authorization': `Bearer ${getToken()}`, 'Content-Type': 'application/json' };
+  }
+  function logout() { localStorage.removeItem('dg_token'); localStorage.removeItem('dg_user'); window.location.href = '../login.html'; }
+
+  // Tab switching
+  function switchTab(name) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(el => {
+      el.classList.remove('border-blue-500', 'text-white');
+      el.classList.add('border-transparent', 'text-gray-500');
+    });
+    document.getElementById(`tab-${name}-content`).classList.remove('hidden');
+    const btn = document.getElementById(`tab-${name}`);
+    btn.classList.add('border-blue-500', 'text-white');
+    btn.classList.remove('border-transparent', 'text-gray-500');
+
+    if (name === 'payments') loadPayments('');
+    if (name === 'users') loadUsers();
+    if (name === 'stats') loadStats();
+  }
+
+  // ── PAYMENTS ──
+  async function loadPayments(status) {
+    document.getElementById('paymentsLoading').classList.remove('hidden');
+    document.getElementById('paymentsList').innerHTML = '';
+    document.querySelectorAll('.filter-btn').forEach(b => {
+      b.classList.remove('bg-blue-600', 'text-white');
+      b.classList.add('bg-gray-800', 'text-gray-400');
+    });
+    const activeId = status === '' ? 'filter-all' : `filter-${status}`;
+    document.getElementById(activeId)?.classList.add('bg-blue-600','text-white');
+
+    const url = status ? `${API}/payment/admin/requests?status=${status}` : `${API}/payment/admin/requests`;
+    const res = await fetch(url, { headers: authHeaders() });
+    if (res.status === 403) { alert('Admin kirishi talab qilinadi!'); return; }
+    const data = await res.json();
+    document.getElementById('paymentsLoading').classList.add('hidden');
+
+    if (!data.length) {
+      document.getElementById('paymentsList').innerHTML = `<div class="text-center py-10 text-gray-600">So'rovlar yo'q</div>`;
+      return;
+    }
+
+    const statusConfig = {
+      pending:  { cls: 'bg-yellow-900/40 text-yellow-400 border-yellow-700/40', label: '⏳ Kutilmoqda' },
+      approved: { cls: 'bg-green-900/40 text-green-400 border-green-700/40',   label: '✅ Tasdiqlandi' },
+      rejected: { cls: 'bg-red-900/40 text-red-400 border-red-700/40',         label: '❌ Rad etildi' },
+    };
+
+    document.getElementById('paymentsList').innerHTML = data.map(r => {
+      const s = statusConfig[r.status] || statusConfig.pending;
+      return `
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 hover:border-gray-700 transition">
+          <div class="flex items-start justify-between mb-3">
+            <div>
+              <div class="font-semibold">${r.user_name || 'Noma\'lum'}</div>
+              <div class="text-gray-500 text-xs">${r.user_email || ''} ${r.user_phone ? '· '+r.user_phone : ''}</div>
+            </div>
+            <span class="text-xs px-2.5 py-1 rounded-full border ${s.cls}">${s.label}</span>
+          </div>
+          <div class="flex items-center justify-between text-sm mb-3">
+            <span class="text-gray-400">Miqdor: <strong class="text-white">${r.amount.toLocaleString()} ${r.currency}</strong></span>
+            <span class="text-gray-600 text-xs">${new Date(r.created_at).toLocaleString('uz-UZ')}</span>
+          </div>
+          ${r.note ? `<div class="bg-gray-800 rounded-xl p-3 text-xs text-gray-300 mb-3 italic">"${r.note}"</div>` : ''}
+          ${r.admin_note ? `<div class="text-xs text-blue-400 mb-3">Admin: ${r.admin_note}</div>` : ''}
+          ${r.status === 'pending' ? `
+            <button onclick="openModal('${r.id}', '${(r.user_name||'').replace(/'/g,"\\'")}', '${(r.note||'').replace(/'/g,"\\'")}', '${r.user_email||''}')"
+              class="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded-xl text-sm font-semibold transition">
+              Ko'rib chiqish
+            </button>` : ''}
+        </div>`;
+    }).join('');
+    lucide.createIcons();
+  }
+
+  // ── USERS ──
+  async function loadUsers() {
+    document.getElementById('usersLoading').classList.remove('hidden');
+    const res = await fetch(`${API}/payment/admin/users`, { headers: authHeaders() });
+    const data = await res.json();
+    document.getElementById('usersLoading').classList.add('hidden');
+
+    document.getElementById('usersList').innerHTML = data.map(u => `
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 flex items-center justify-between">
+        <div>
+          <div class="font-semibold">${u.full_name}</div>
+          <div class="text-gray-500 text-xs mt-0.5">${u.email} ${u.phone ? '· '+u.phone : ''}</div>
+          <div class="text-gray-600 text-xs mt-1">
+            ${u.device_count} ta qurilma · Ro'yxatdan: ${new Date(u.created_at).toLocaleDateString('uz-UZ')}
+            ${u.end_date ? `· Obuna tugaydi: ${new Date(u.end_date).toLocaleDateString('uz-UZ')}` : ''}
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="${u.plan === 'pro' ? 'bg-yellow-500/20 border-yellow-500/40 text-yellow-400' : 'bg-gray-800 border-gray-700 text-gray-400'} border text-xs font-bold px-2.5 py-1 rounded-full">
+            ${u.plan === 'pro' ? '⭐ PRO' : 'FREE'}
+          </span>
+          ${u.plan !== 'pro' ? `
+            <button onclick="setPlan('${u.id}', 'pro')" class="px-3 py-1.5 bg-yellow-600 hover:bg-yellow-700 rounded-lg text-xs font-semibold transition">
+              PRO berish
+            </button>` : `
+            <button onclick="setPlan('${u.id}', 'free')" class="px-3 py-1.5 border border-gray-700 hover:bg-gray-800 rounded-lg text-xs text-gray-400 transition">
+              FREE qilish
+            </button>`}
+        </div>
+      </div>`).join('');
+  }
+
+  // ── STATS ──
+  async function loadStats() {
+    document.getElementById('statsLoading').classList.remove('hidden');
+    const res = await fetch(`${API}/payment/admin/stats`, { headers: authHeaders() });
+    const data = await res.json();
+    document.getElementById('statsLoading').classList.add('hidden');
+    document.getElementById('statsContent').classList.remove('hidden');
+
+    document.getElementById('stat-total-users').textContent = data.total_users;
+    document.getElementById('stat-pro-users').textContent = data.pro_users;
+    document.getElementById('stat-free-users').textContent = data.free_users;
+    document.getElementById('stat-total-devices').textContent = data.total_devices;
+    document.getElementById('stat-pending').textContent = data.pending_payments;
+    document.getElementById('stat-revenue').textContent = (data.estimated_revenue_uzs || 0).toLocaleString() + ' so\'m';
+  }
+
+  // ── MODAL ──
+  function openModal(id, name, note, email) {
+    currentRequestId = id;
+    document.getElementById('modalTitle').textContent = `To'lovni ko'rib chiqish`;
+    document.getElementById('modalUser').textContent = `${name} (${email})`;
+    document.getElementById('adminNote').value = '';
+    const noteEl = document.getElementById('modalNote');
+    if (note) { noteEl.textContent = `"${note}"`; noteEl.classList.remove('hidden'); }
+    else noteEl.classList.add('hidden');
+    document.getElementById('reviewModal').classList.remove('hidden');
+  }
+  function closeModal() { document.getElementById('reviewModal').classList.add('hidden'); currentRequestId = null; }
+
+  async function reviewPayment(status) {
+    if (!currentRequestId) return;
+    const adminNote = document.getElementById('adminNote').value.trim();
+    const res = await fetch(`${API}/payment/admin/requests/${currentRequestId}/review`, {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify({ status, admin_note: adminNote || null })
+    });
+    if (res.ok) { closeModal(); loadPayments(''); }
+    else { const d = await res.json(); alert(d.detail || 'Xato'); }
+  }
+
+  async function setPlan(userId, plan) {
+    if (!confirm(`Bu foydalanuvchini ${plan.toUpperCase()} rejimga o'tkazasizmi?`)) return;
+    const res = await fetch(`${API}/payment/admin/users/${userId}/set-plan?plan=${plan}`, {
+      method: 'POST', headers: authHeaders()
+    });
+    if (res.ok) loadUsers();
+    else { const d = await res.json(); alert(d.detail); }
+  }
+
+  // Init
+  async function init() {
+    const meRes = await fetch(`${API}/auth/me`, { headers: authHeaders() });
+    if (!meRes.ok) { window.location.href = '../login.html'; return; }
+    const me = await meRes.json();
+    if (me.role !== 'admin') {
+      alert('Bu sahifa faqat adminlar uchun!');
+      window.location.href = 'index.html';
+      return;
+    }
+    switchTab('payments');
+  }
+
+  init();
+</script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Qurilmani tahrirlash — DeviceGuard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/theme.css"/>
+  <script src="https://unpkg.com/lucide@0.383.0/dist/umd/lucide.min.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/app.js"></script>
+</head>
+<body class="bg-gray-950 text-white min-h-screen">
+<div id="navbar"></div>
+<div class="max-w-2xl mx-auto px-4 py-8">
+  <div class="flex items-center gap-3 mb-6">
+    <a href="index.html" class="p-2 text-gray-500 hover:text-white hover:bg-gray-800 rounded-xl transition">
+      <i data-lucide="arrow-left" class="w-4 h-4"></i>
+    </a>
+    <h1 class="text-xl font-bold">Qurilmani tahrirlash</h1>
+  </div>
+  <div id="errMsg" class="hidden bg-red-900/40 border border-red-700/50 text-red-300 text-sm rounded-xl px-4 py-3 mb-4"></div>
+  <div id="loading" class="text-center py-12 text-gray-600"><i data-lucide="loader-2" class="w-7 h-7 mx-auto animate-spin"></i></div>
+
+  <form id="editForm" class="hidden space-y-4" onsubmit="handleSave(event)">
+    <div class="grid grid-cols-2 gap-3">
+      <div class="col-span-2">
+        <label class="text-xs text-gray-500 mb-1 block">Qurilma nomi *</label>
+        <input id="name" required class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition"/>
+      </div>
+      <div>
+        <label class="text-xs text-gray-500 mb-1 block">Kategoriya *</label>
+        <select id="category" required class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition">
+          <option value="phone">📱 Telefon</option><option value="laptop">💻 Noutbuk</option>
+          <option value="tablet">🔲 Planshet</option><option value="watch">⌚ Soat</option>
+          <option value="headphones">🎧 Quloqchin</option><option value="camera">📷 Kamera</option>
+          <option value="other">📦 Boshqa</option>
+        </select>
+      </div>
+      <div>
+        <label class="text-xs text-gray-500 mb-1 block">Rang</label>
+        <input id="color" placeholder="Qora, Oq..." class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition"/>
+      </div>
+      <div>
+        <label class="text-xs text-gray-500 mb-1 block">Brend *</label>
+        <input id="brand" required class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition"/>
+      </div>
+      <div>
+        <label class="text-xs text-gray-500 mb-1 block">Model *</label>
+        <input id="model" required class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition"/>
+      </div>
+      <div class="col-span-2">
+        <label class="text-xs text-gray-500 mb-1 block">Oxirgi joylashuv</label>
+        <input id="last_location" placeholder="Toshkent, Chilonzor..." class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition"/>
+      </div>
+      <div>
+        <label class="text-xs text-gray-500 mb-1 block">Mukofot ($)</label>
+        <input id="reward" type="number" min="0" placeholder="0" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition"/>
+      </div>
+      <div>
+        <label class="text-xs text-gray-500 mb-1 block">Sotib olingan sana</label>
+        <input id="purchase_date" type="date" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition"/>
+      </div>
+      <div class="col-span-2">
+        <label class="text-xs text-gray-500 mb-1 block">Tavsif</label>
+        <textarea id="description" rows="3" placeholder="Maxsus belgilar, chiziqlar..." class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition resize-none"></textarea>
+      </div>
+    </div>
+    <div class="flex gap-3 pt-2">
+      <a href="index.html" class="flex-1 py-3 border border-gray-700 hover:border-gray-600 rounded-xl text-sm font-semibold text-center text-gray-400 transition">Bekor qilish</a>
+      <button type="submit" id="saveBtn" class="flex-1 py-3 bg-blue-600 hover:bg-blue-700 rounded-xl text-sm font-semibold transition">Saqlash</button>
+    </div>
+  </form>
+</div>
+<script>
+document.getElementById('navbar').innerHTML = buildNavbar({ prefix: '../' });
+lucide.createIcons();
+if (!requireAuth()) throw '';
+
+const deviceId = new URLSearchParams(location.search).get('id');
+if (!deviceId) location.href = 'index.html';
+
+async function init() {
+  const res = await fetch(`${API}/devices/${deviceId}`, { headers: authHeaders() });
+  if (res.status === 401) { logout(); return; }
+  if (!res.ok) { location.href = 'index.html'; return; }
+  const d = await res.json();
+  document.getElementById('loading').classList.add('hidden');
+  document.getElementById('editForm').classList.remove('hidden');
+  document.getElementById('name').value = d.name || '';
+  document.getElementById('brand').value = d.brand || '';
+  document.getElementById('model').value = d.model || '';
+  document.getElementById('category').value = d.category || 'phone';
+  document.getElementById('color').value = d.color || '';
+  document.getElementById('description').value = d.description || '';
+  document.getElementById('last_location').value = d.last_location || '';
+  document.getElementById('reward').value = d.reward || '';
+  document.getElementById('purchase_date').value = d.purchase_date || '';
+}
+
+async function handleSave(e) {
+  e.preventDefault();
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true; btn.textContent = 'Saqlanmoqda...';
+  const body = {
+    name: document.getElementById('name').value,
+    brand: document.getElementById('brand').value,
+    model: document.getElementById('model').value,
+    category: document.getElementById('category').value,
+    color: document.getElementById('color').value || null,
+    description: document.getElementById('description').value || null,
+    last_location: document.getElementById('last_location').value || null,
+    reward: document.getElementById('reward').value ? parseInt(document.getElementById('reward').value) : null,
+    purchase_date: document.getElementById('purchase_date').value || null,
+  };
+  const res = await fetch(`${API}/devices/${deviceId}`, {
+    method: 'PUT', headers: authHeaders(), body: JSON.stringify(body)
+  });
+  btn.disabled = false; btn.textContent = 'Saqlash';
+  if (res.ok) location.href = 'index.html';
+  else {
+    const d = await res.json();
+    const err = document.getElementById('errMsg');
+    err.textContent = d.detail || 'Xato'; err.classList.remove('hidden');
+  }
+}
+init();
+</script>
+</body>
+</html>

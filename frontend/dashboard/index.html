@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard — DeviceGuard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/theme.css"/>
+  <script src="https://unpkg.com/lucide@0.383.0/dist/umd/lucide.min.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/app.js"></script>
+</head>
+<body class="bg-gray-950 text-white min-h-screen">
+<div id="navbar"></div>
+
+<div class="max-w-6xl mx-auto px-4 py-6">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+    <div>
+      <h1 class="text-xl font-bold" id="pageTitle">Qurilmalarim</h1>
+      <div id="usageLine" class="text-gray-500 text-xs mt-0.5"></div>
+    </div>
+    <div class="flex gap-2">
+      <div class="relative flex-1 sm:flex-none">
+        <i data-lucide="search" class="w-3.5 h-3.5 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2"></i>
+        <input id="searchInput" placeholder="Qidirish..."
+          oninput="filterDevices()"
+          class="w-full sm:w-48 bg-gray-900 border border-gray-800 rounded-xl pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition"/>
+      </div>
+      <button onclick="checkAndAdd()" id="addBtn"
+        class="flex items-center gap-1.5 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 rounded-xl text-sm font-semibold transition whitespace-nowrap">
+        <i data-lucide="plus" class="w-4 h-4"></i>
+        <span class="hidden sm:inline">Qurilma qo'shish</span>
+        <span class="sm:hidden">Qo'shish</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Usage bar -->
+  <div id="limitBar" class="hidden bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 mb-4">
+    <div class="flex items-center justify-between mb-1.5">
+      <span class="text-xs text-gray-500">Qurilmalar</span>
+      <span id="limitText" class="text-xs font-semibold"></span>
+    </div>
+    <div class="w-full bg-gray-800 rounded-full h-1.5">
+      <div id="limitFill" class="h-1.5 rounded-full transition-all"></div>
+    </div>
+    <div id="limitHint" class="text-xs text-gray-600 mt-1.5"></div>
+  </div>
+
+  <!-- Status filter -->
+  <div class="flex gap-2 mb-4 overflow-x-auto pb-1">
+    <button onclick="setFilter('all')" id="f-all" class="filter-btn flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-medium transition">Barchasi</button>
+    <button onclick="setFilter('active')" id="f-active" class="filter-btn flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-medium transition">✓ Faol</button>
+    <button onclick="setFilter('lost')" id="f-lost" class="filter-btn flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-medium transition">✗ Yo'qolgan</button>
+    <button onclick="setFilter('found')" id="f-found" class="filter-btn flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-medium transition">◉ Topilgan</button>
+  </div>
+
+  <div id="loading" class="text-center py-16 text-gray-600">
+    <i data-lucide="loader-2" class="w-7 h-7 mx-auto animate-spin mb-2"></i>
+  </div>
+  <div id="empty" class="hidden text-center py-16">
+    <i data-lucide="smartphone" class="w-14 h-14 mx-auto text-gray-700 mb-3"></i>
+    <p class="text-gray-400 font-medium mb-1">Qurilmalar yo'q</p>
+    <p class="text-gray-600 text-sm mb-5">Birinchi qurilmangizni qo'shing</p>
+    <button onclick="checkAndAdd()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 rounded-xl text-sm font-semibold transition">Qurilma qo'shish</button>
+  </div>
+  <div id="deviceGrid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+  <div id="noMatch" class="hidden text-center py-10 text-gray-500 text-sm">Mos qurilma topilmadi</div>
+</div>
+
+<!-- Upgrade Modal -->
+<div id="upgradeModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 max-w-sm w-full">
+    <div class="text-center mb-5">
+      <div class="w-14 h-14 bg-blue-600/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
+        <i data-lucide="zap" class="w-7 h-7 text-blue-400"></i>
+      </div>
+      <div class="font-bold text-lg" id="modalTitle">Limit to'ldi</div>
+      <p class="text-gray-400 text-sm mt-1" id="modalDesc">PRO rejimga o'ting</p>
+    </div>
+    <div class="grid grid-cols-2 gap-3 mb-4 text-sm text-center">
+      <div class="bg-gray-800 rounded-xl p-3">
+        <div class="text-gray-500 text-xs mb-1">Bepul</div>
+        <div class="font-bold">3 qurilma</div>
+        <div class="text-gray-500 text-xs">$0/oy</div>
+      </div>
+      <div class="bg-blue-900/30 border border-blue-700/30 rounded-xl p-3">
+        <div class="text-blue-400 text-xs mb-1">PRO ⭐</div>
+        <div class="font-bold">10 qurilma</div>
+        <div class="text-blue-300 text-xs">$4.99/oy</div>
+      </div>
+    </div>
+    <a href="subscription.html" class="block w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-xl text-sm font-semibold text-center transition mb-2">
+      PRO ga o'tish
+    </a>
+    <button onclick="closeModal()" class="w-full py-2 text-gray-500 hover:text-gray-300 text-sm transition">Keyinroq</button>
+  </div>
+</div>
+
+<!-- Status Modal -->
+<div id="statusModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 max-w-xs w-full">
+    <div class="font-semibold mb-4 text-sm">Holat o'zgartirish</div>
+    <input type="hidden" id="statusDeviceId"/>
+    <div class="space-y-2 mb-3">
+      <button onclick="setStatus('active')" class="w-full py-2.5 border border-green-700/40 hover:bg-green-900/30 rounded-xl text-sm text-green-400 transition">✓ Faol</button>
+      <button onclick="showLostFields()" class="w-full py-2.5 border border-red-700/40 hover:bg-red-900/30 rounded-xl text-sm text-red-400 transition">✗ Yo'qolgan</button>
+      <button onclick="setStatus('found')" class="w-full py-2.5 border border-blue-700/40 hover:bg-blue-900/30 rounded-xl text-sm text-blue-400 transition">◉ Topilgan</button>
+    </div>
+    <div id="lostFields" class="hidden space-y-2 mb-3">
+      <input id="lastLocation" placeholder="Oxirgi joylashuv" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-red-500"/>
+      <input id="rewardInput" type="number" placeholder="Mukofot ($)" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-red-500"/>
+      <button onclick="setStatus('lost')" class="w-full py-2 bg-red-700 hover:bg-red-800 rounded-xl text-sm text-white font-semibold transition">Yo'qolgan deb belgilash</button>
+    </div>
+    <button onclick="closeStatusModal()" class="w-full py-2 text-gray-500 hover:text-gray-300 text-sm transition">Bekor qilish</button>
+  </div>
+</div>
+
+<script>
+document.getElementById('navbar').innerHTML = buildNavbar({ prefix: '../' });
+lucide.createIcons();
+if (!requireAuth()) throw '';
+
+let allDevices = [];
+let currentFilter = 'all';
+let currentPlan = 'free';
+let deviceCount = 0;
+let deviceLimit = 3;
+
+const CAT_ICON = { phone:'smartphone', laptop:'laptop', tablet:'tablet', watch:'watch', headphones:'headphones', camera:'camera', other:'package' };
+const STATUS_CFG = {
+  active: { cls:'bg-green-900/40 text-green-400 border-green-700/40', label:'✓ Faol' },
+  lost:   { cls:'bg-red-900/40 text-red-400 border-red-700/40',       label:'✗ Yo\'qolgan' },
+  found:  { cls:'bg-blue-900/40 text-blue-400 border-blue-700/40',    label:'◉ Topilgan' },
+};
+
+async function init() {
+  try {
+    const [subRes, devRes] = await Promise.all([
+      fetch(`${API}/subscription`, { headers: authHeaders() }),
+      fetch(`${API}/devices`, { headers: authHeaders() }),
+    ]);
+    if (subRes.status === 401) { logout(); return; }
+    const sub = await subRes.json();
+    allDevices = devRes.ok ? await devRes.json() : [];
+
+    currentPlan = sub.plan;
+    deviceCount = sub.device_count;
+    deviceLimit = sub.device_limit;
+
+    // Usage bar
+    if (deviceLimit) {
+      const bar = document.getElementById('limitBar');
+      bar.classList.remove('hidden');
+      document.getElementById('limitText').textContent = `${deviceCount} / ${deviceLimit}`;
+      const pct = Math.min(100, (deviceCount / deviceLimit) * 100);
+      const fill = document.getElementById('limitFill');
+      fill.style.width = pct + '%';
+      fill.className = `h-1.5 rounded-full transition-all ${pct>=80?'bg-red-500':pct>=60?'bg-yellow-500':'bg-blue-500'}`;
+      if (deviceCount >= deviceLimit) {
+        document.getElementById('limitHint').innerHTML =
+          `<a href="subscription.html" class="text-blue-400 hover:underline">PRO ga o'ting</a> — ko'proq qurilma qo'shing`;
+      }
+    }
+
+    document.getElementById('loading').classList.add('hidden');
+    setFilter('all');
+  } catch {
+    document.getElementById('loading').innerHTML = `<p class="text-red-400 text-center text-sm">Server bilan ulanib bo'lmadi.</p>`;
+  }
+}
+
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.classList.remove('bg-blue-600','text-white');
+    b.classList.add('bg-gray-900','text-gray-400');
+  });
+  const btn = document.getElementById(`f-${f}`);
+  if (btn) { btn.classList.add('bg-blue-600','text-white'); btn.classList.remove('bg-gray-900','text-gray-400'); }
+  filterDevices();
+}
+
+function filterDevices() {
+  const q = (document.getElementById('searchInput')?.value || '').toLowerCase();
+  let list = currentFilter === 'all' ? allDevices : allDevices.filter(d => d.status === currentFilter);
+  if (q) list = list.filter(d => d.name.toLowerCase().includes(q) || d.brand.toLowerCase().includes(q) || d.serial_number.toLowerCase().includes(q));
+
+  const grid = document.getElementById('deviceGrid');
+  const empty = document.getElementById('empty');
+  const noMatch = document.getElementById('noMatch');
+  noMatch.classList.add('hidden');
+  if (!allDevices.length) { empty.classList.remove('hidden'); grid.classList.add('hidden'); return; }
+  empty.classList.add('hidden');
+  if (!list.length) { noMatch.classList.remove('hidden'); grid.classList.add('hidden'); return; }
+  grid.classList.remove('hidden');
+  grid.innerHTML = list.map(d => renderCard(d)).join('');
+  lucide.createIcons();
+}
+
+function renderCard(d) {
+  const icon = CAT_ICON[d.category] || 'package';
+  const st = STATUS_CFG[d.status] || STATUS_CFG.active;
+  return `
+  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-4 hover:border-gray-700 transition">
+    <div class="flex items-start justify-between mb-3">
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 bg-gray-800 rounded-xl flex items-center justify-center flex-shrink-0">
+          <i data-lucide="${icon}" class="w-4 h-4 text-gray-400"></i>
+        </div>
+        <div>
+          <div class="font-semibold text-sm leading-tight">${d.name}</div>
+          <div class="text-gray-500 text-xs">${d.brand} · ${d.model}</div>
+        </div>
+      </div>
+      <span class="text-xs px-2 py-0.5 rounded-full border ${st.cls} flex-shrink-0">${st.label}</span>
+    </div>
+    <div class="space-y-1 text-xs text-gray-500 mb-3">
+      <div class="font-mono">S/N: ${d.serial_number}</div>
+      ${d.imei ? `<div class="font-mono">IMEI: ${d.imei}</div>` : ''}
+      ${d.last_location && d.status==='lost' ? `<div class="flex items-center gap-1"><i data-lucide="map-pin" class="w-3 h-3"></i>${d.last_location}</div>` : ''}
+      ${d.reward ? `<div class="text-yellow-400">Mukofot: $${d.reward}</div>` : ''}
+    </div>
+    <div class="flex gap-1.5">
+      <button onclick="openStatusModal('${d.id}')"
+        class="flex-1 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-xs transition">
+        Holat
+      </button>
+      <a href="edit-device.html?id=${d.id}"
+        class="px-3 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-xs transition flex items-center">
+        <i data-lucide="pencil" class="w-3.5 h-3.5 text-gray-400"></i>
+      </a>
+      <button onclick="deleteDevice('${d.id}')"
+        class="px-3 py-2 text-gray-600 hover:text-red-400 hover:bg-red-900/20 rounded-lg transition">
+        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+      </button>
+    </div>
+  </div>`;
+}
+
+function checkAndAdd() {
+  if (deviceLimit && deviceCount >= deviceLimit) {
+    document.getElementById('upgradeModal').classList.remove('hidden');
+  } else {
+    location.href = 'add-device.html';
+  }
+}
+function closeModal() { document.getElementById('upgradeModal').classList.add('hidden'); }
+
+function openStatusModal(id) {
+  document.getElementById('statusDeviceId').value = id;
+  document.getElementById('lostFields').classList.add('hidden');
+  document.getElementById('lastLocation').value = '';
+  document.getElementById('rewardInput').value = '';
+  document.getElementById('statusModal').classList.remove('hidden');
+}
+function closeStatusModal() { document.getElementById('statusModal').classList.add('hidden'); }
+function showLostFields() { document.getElementById('lostFields').classList.remove('hidden'); }
+
+async function setStatus(status) {
+  const id = document.getElementById('statusDeviceId').value;
+  const body = { status };
+  if (status === 'lost') {
+    const loc = document.getElementById('lastLocation').value;
+    const reward = document.getElementById('rewardInput').value;
+    if (loc) body.last_location = loc;
+    if (reward) body.reward = parseInt(reward);
+  }
+  const res = await fetch(`${API}/devices/${id}/status`, {
+    method: 'PATCH', headers: authHeaders(), body: JSON.stringify(body)
+  });
+  if (res.ok) { closeStatusModal(); init(); }
+}
+
+async function deleteDevice(id) {
+  if (!confirm("Bu qurilmani o'chirmoqchimisiz?")) return;
+  const res = await fetch(`${API}/devices/${id}`, { method: 'DELETE', headers: authHeaders() });
+  if (res.ok) { allDevices = allDevices.filter(d => d.id !== id); deviceCount--; filterDevices(); }
+}
+
+init();
+</script>
+</body>
+</html>

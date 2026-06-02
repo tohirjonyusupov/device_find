@@ -1,0 +1,131 @@
+/* ── DeviceGuard Theme (Light/Dark) ─────────────────────── */
+
+/* ── Base ── */
+.light-mode,
+.light-mode body {
+  background-color: #f0f4f8 !important;
+  color: #0f172a !important;
+}
+
+/* ── Navbar ── */
+.light-mode nav {
+  background: rgba(255,255,255,0.97) !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06) !important;
+}
+.light-mode nav a, .light-mode nav span { color: #334155 !important; }
+.light-mode nav .text-white { color: #0f172a !important; }
+.light-mode .flex.gap-1.bg-gray-900 { background-color: #f1f5f9 !important; border-color: #e2e8f0 !important; }
+
+/* ── Backgrounds ── */
+.light-mode .bg-gray-950  { background-color: #f0f4f8 !important; }
+.light-mode .bg-gray-900  { background-color: #ffffff !important; }
+.light-mode .bg-gray-800  { background-color: #f1f5f9 !important; }
+.light-mode .bg-gray-950\/95 { background: rgba(255,255,255,0.97) !important; }
+.light-mode .bg-gray-800\/50 { background-color: rgba(241,245,249,0.8) !important; }
+.light-mode .bg-gray-800\/60 { background-color: rgba(241,245,249,0.9) !important; }
+.light-mode .bg-gray-800\/80 { background-color: rgba(241,245,249,0.95) !important; }
+.light-mode .bg-gray-900\/50 { background-color: rgba(255,255,255,0.7) !important; }
+
+/* ── Borders ── */
+.light-mode .border-gray-800 { border-color: #e2e8f0 !important; }
+.light-mode .border-gray-700 { border-color: #cbd5e1 !important; }
+
+/* ── Text ── */
+.light-mode .text-white    { color: #0f172a !important; }
+.light-mode .text-gray-300 { color: #475569 !important; }
+.light-mode .text-gray-400 { color: #64748b !important; }
+.light-mode .text-gray-500 { color: #94a3b8 !important; }
+.light-mode .text-gray-600 { color: #94a3b8 !important; }
+.light-mode .text-gray-700 { color: #64748b !important; }
+
+/* ── Inputs ── */
+.light-mode input, .light-mode select, .light-mode textarea {
+  background-color: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+.light-mode input::placeholder, .light-mode textarea::placeholder { color: #94a3b8 !important; }
+.light-mode input:focus, .light-mode select:focus, .light-mode textarea:focus {
+  border-color: #3b82f6 !important;
+  background-color: #ffffff !important;
+}
+
+/* ── Card shadows ── */
+.light-mode .bg-gray-900.border {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+}
+
+/* ── Hover states ── */
+.light-mode .hover\:bg-gray-800:hover  { background-color: #f1f5f9 !important; }
+.light-mode .hover\:bg-gray-700:hover  { background-color: #e2e8f0 !important; }
+.light-mode .hover\:text-white:hover   { color: #0f172a !important; }
+
+/* ── Status colors — keep vibrant ── */
+.light-mode .text-green-400 { color: #16a34a !important; }
+.light-mode .text-red-400   { color: #dc2626 !important; }
+.light-mode .text-blue-400  { color: #2563eb !important; }
+.light-mode .text-blue-300  { color: #3b82f6 !important; }
+.light-mode .text-blue-500  { color: #2563eb !important; }
+.light-mode .text-yellow-400 { color: #ca8a04 !important; }
+
+/* ── Status badge backgrounds ── */
+.light-mode .bg-green-900\/40  { background-color: rgba(220,252,231,0.7) !important; }
+.light-mode .bg-red-900\/40    { background-color: rgba(254,226,226,0.7) !important; }
+.light-mode .bg-blue-900\/40   { background-color: rgba(219,234,254,0.7) !important; }
+.light-mode .bg-yellow-900\/40 { background-color: rgba(254,249,195,0.7) !important; }
+.light-mode .bg-yellow-900\/30 { background-color: rgba(254,249,195,0.5) !important; }
+.light-mode .bg-blue-900\/30   { background-color: rgba(219,234,254,0.5) !important; }
+.light-mode .bg-blue-900\/20   { background-color: rgba(219,234,254,0.3) !important; }
+.light-mode .bg-blue-900\/50   { background-color: rgba(219,234,254,0.5) !important; }
+.light-mode .bg-red-900\/30    { background-color: rgba(254,226,226,0.5) !important; }
+.light-mode .bg-red-900\/20    { background-color: rgba(254,226,226,0.3) !important; }
+
+/* ── Gradient sections ── */
+.light-mode .from-blue-900\/50 {
+  background: linear-gradient(to bottom right, rgba(219,234,254,0.6), #ffffff) !important;
+}
+.light-mode .bg-gradient-to-b.from-blue-900\/40 {
+  background: linear-gradient(to bottom, rgba(219,234,254,0.5), #ffffff) !important;
+}
+
+/* ── Buttons — keep ── */
+.light-mode .bg-blue-600  { background-color: #2563eb !important; color: #fff !important; }
+.light-mode .bg-green-600 { background-color: #16a34a !important; color: #fff !important; }
+.light-mode .bg-green-700 { background-color: #15803d !important; color: #fff !important; }
+.light-mode .bg-red-600   { background-color: #dc2626 !important; color: #fff !important; }
+.light-mode .bg-red-700   { background-color: #b91c1c !important; color: #fff !important; }
+.light-mode .bg-gray-700  { background-color: #e2e8f0 !important; color: #334155 !important; }
+
+/* ── Icon containers ── */
+.light-mode .bg-blue-600\/20  { background-color: rgba(219,234,254,0.6) !important; }
+.light-mode .bg-red-600\/20   { background-color: rgba(254,226,226,0.6) !important; }
+.light-mode .bg-green-600\/20 { background-color: rgba(220,252,231,0.6) !important; }
+.light-mode .bg-yellow-500\/20 { background-color: rgba(254,249,195,0.6) !important; }
+
+/* ── Progress bars ── */
+.light-mode .bg-blue-500   { background-color: #3b82f6 !important; }
+.light-mode .bg-red-500    { background-color: #ef4444 !important; }
+.light-mode .bg-yellow-500 { background-color: #eab308 !important; }
+.light-mode .bg-gray-800.rounded-full { background-color: #e2e8f0 !important; }
+.light-mode .bg-gray-700.rounded-full { background-color: #e2e8f0 !important; }
+
+/* ── Modal overlay ── */
+.light-mode .fixed.inset-0.bg-black\/70 { background-color: rgba(0,0,0,0.4) !important; }
+
+/* ── Mono/code text ── */
+.light-mode .font-mono { color: #475569 !important; }
+
+/* ── Footer ── */
+.light-mode footer { border-color: #e2e8f0 !important; color: #94a3b8 !important; }
+
+/* ── Scrollbar ── */
+.light-mode ::-webkit-scrollbar { width: 6px; height: 6px; }
+.light-mode ::-webkit-scrollbar-track { background: #f1f5f9; }
+.light-mode ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+
+/* ── Smooth transition ── */
+body, nav, .bg-gray-900, .bg-gray-950, .bg-gray-800,
+input, select, textarea, button {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.15s ease;
+}

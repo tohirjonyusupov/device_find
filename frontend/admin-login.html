@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin — DeviceGuard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/theme.css"/>
+  <script src="https://unpkg.com/lucide@0.383.0/dist/umd/lucide.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+</head>
+<body class="bg-gray-950 text-white min-h-screen flex items-center justify-center px-4">
+<div class="w-full max-w-sm">
+  <div class="text-center mb-8">
+    <div class="w-14 h-14 bg-red-600/20 border border-red-700/40 rounded-2xl flex items-center justify-center mx-auto mb-3">
+      <i data-lucide="shield-alert" class="w-7 h-7 text-red-400"></i>
+    </div>
+    <div class="font-bold text-lg">Admin Panel</div>
+    <div class="text-gray-500 text-sm mt-0.5">DeviceGuard boshqaruv tizimi</div>
+  </div>
+
+  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+    <div id="errMsg" class="hidden bg-red-900/40 border border-red-700/50 text-red-300 text-sm rounded-xl px-3 py-2.5 mb-4"></div>
+    <form onsubmit="handleLogin(event)" class="space-y-3">
+      <div>
+        <label class="text-xs text-gray-500 mb-1 block">Admin email</label>
+        <input id="email" type="email" required autocomplete="username"
+          class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-red-500 transition"/>
+      </div>
+      <div>
+        <label class="text-xs text-gray-500 mb-1 block">Parol</label>
+        <input id="password" type="password" required autocomplete="current-password"
+          class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-red-500 transition"/>
+      </div>
+      <button type="submit" id="loginBtn"
+        class="w-full py-3 bg-red-600 hover:bg-red-700 rounded-xl text-sm font-semibold transition mt-1">
+        Admin sifatida kirish
+      </button>
+    </form>
+  </div>
+  <p class="text-center mt-4">
+    <a href="login.html" class="text-gray-600 hover:text-gray-400 text-xs">← Oddiy kirish</a>
+  </p>
+</div>
+
+<script>
+lucide.createIcons();
+if (getToken()) {
+  const u = getUser();
+  if (u.role === 'admin') { location.href = 'dashboard/admin.html'; }
+  else { location.href = 'dashboard/index.html'; }
+}
+
+async function handleLogin(e) {
+  e.preventDefault();
+  const btn = document.getElementById('loginBtn');
+  const err = document.getElementById('errMsg');
+  btn.disabled = true; btn.textContent = 'Kirilmoqda...';
+  err.classList.add('hidden');
+  try {
+    const res = await fetch(`${API}/auth/login`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: document.getElementById('email').value, password: document.getElementById('password').value })
+    });
+    const data = await res.json();
+    if (!res.ok) { err.textContent = data.detail || 'Xato'; err.classList.remove('hidden'); return; }
+    if (data.role !== 'admin') { err.textContent = 'Bu hisob admin emas!'; err.classList.remove('hidden'); return; }
+    localStorage.setItem('dg_token', data.token);
+    localStorage.setItem('dg_user', JSON.stringify(data));
+    location.href = 'dashboard/admin.html';
+  } catch { err.textContent = "Server bilan ulanib bo'lmadi"; err.classList.remove('hidden'); }
+  btn.disabled = false; btn.textContent = 'Admin sifatida kirish';
+}
+</script>
+</body>
+</html>

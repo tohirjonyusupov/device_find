@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-Process *)",
+      "PowerShell(Start-Process \"http://localhost:5500/index.html\")",
+      "PowerShell(pip install *)",
+      "Bash(curl -s http://127.0.0.1:8000/)",
+      "Bash(curl -s http://127.0.0.1:8000/docs)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:8000/auth/login)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:8000/devices/)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:8000/subscription/status)",
+      "Bash(curl -s -X POST http://127.0.0.1:8000/auth/register -H \"Content-Type: application/json\" -d '{\"email\":\"test@example.com\",\"password\":\"Test1234!\",\"name\":\"Test User\"}')",
+      "Bash(curl -s -X POST http://127.0.0.1:8000/auth/login -H \"Content-Type: application/json\" -d '{\"email\":\"test@example.com\",\"password\":\"Test1234!\"}')",
+      "Bash(curl -s -X POST http://127.0.0.1:8000/auth/register -H \"Content-Type: application/json\" -d '{\"full_name\":\"Test User\",\"email\":\"test@example.com\",\"password\":\"Test1234!\"}')",
+      "PowerShell($reg = Invoke-RestMethod -Uri \"http://127.0.0.1:8000/auth/register\" -Method POST -ContentType \"application/json\" -Body '{\"full_name\":\"Demo3 User\",\"email\":\"demo3@example.com\",\"password\":\"Demo1234!\"}'; $token = $reg.token; $devices = Invoke-RestMethod -Uri \"http://127.0.0.1:8000/devices\" -Headers @{Authorization=\"Bearer $token\"}; Write-Host \"Devices \\(empty list\\): $\\($devices | ConvertTo-Json -Compress\\)\"; $newDevice = Invoke-RestMethod -Uri \"http://127.0.0.1:8000/devices\" -Method POST -ContentType \"application/json\" -Headers @{Authorization=\"Bearer $token\"} -Body '{\"name\":\"My Phone\",\"brand\":\"Apple\",\"model\":\"iPhone 14\",\"category\":\"phone\",\"serial_number\":\"SN123456789\"}'; Write-Host \"Created: $\\($newDevice | ConvertTo-Json -Compress\\)\")",
+      "Bash(venv\\\\Scripts\\\\activate.bat)",
+      "Bash(uvicorn main:app --reload --host 0.0.0.0 --port 8000)",
+      "Bash(Start-Sleep -Seconds 3)",
+      "Bash(Get-Content \"C:\\\\Users\\\\ASILBE~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-Asilbek-Ilhomov-Desktop-device-finder\\\\2cd4e50f-5217-4317-bbd4-cd07d0a747b1\\\\tasks\\\\buv616og2.output\" -Tail 20)",
+      "PowerShell(Invoke-RestMethod -Uri \"http://localhost:8000/\" -Method GET | ConvertTo-Json)",
+      "PowerShell(Start-Process \"C:\\\\Users\\\\Asilbek Ilhomov\\\\Desktop\\\\device_finder\\\\frontend\\\\index.html\")"
+    ]
+  }
+}

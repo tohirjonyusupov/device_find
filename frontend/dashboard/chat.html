@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chat — DeviceGuard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/theme.css"/>
+  <script src="https://unpkg.com/lucide@0.383.0/dist/umd/lucide.min.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/app.js"></script>
+  <style>
+    #msgList { scrollbar-width: thin; }
+    .msg-in  { background: #1f2937; border-radius: 4px 18px 18px 18px; }
+    .msg-out { background: #1d4ed8; border-radius: 18px 4px 18px 18px; }
+    [data-theme="light"] .msg-in  { background: #f1f5f9; color: #0f172a; }
+    [data-theme="light"] .msg-out { background: #2563eb; color: #fff; }
+  </style>
+</head>
+<body class="bg-gray-950 text-white min-h-screen flex flex-col">
+<div id="navbar"></div>
+
+<div class="flex flex-1 max-w-6xl mx-auto w-full px-4 py-4 gap-4" style="height: calc(100vh - 60px)">
+
+  <!-- Sidebar: room list -->
+  <div class="w-72 flex-shrink-0 flex flex-col bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
+    <div class="px-4 py-3 border-b border-gray-800 flex items-center justify-between">
+      <span class="font-semibold text-sm">Chatlar</span>
+      <a href="../lost-devices.html" class="text-xs text-blue-400 hover:underline flex items-center gap-1">
+        <i data-lucide="plus" class="w-3 h-3"></i> Yangi
+      </a>
+    </div>
+    <div id="roomList" class="flex-1 overflow-y-auto">
+      <div class="text-center py-8 text-gray-600 text-sm" id="roomLoading">
+        <i data-lucide="loader-2" class="w-5 h-5 mx-auto animate-spin mb-2"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main: chat window -->
+  <div class="flex-1 flex flex-col bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
+
+    <!-- No room selected -->
+    <div id="noRoom" class="flex-1 flex flex-col items-center justify-center text-center p-6">
+      <i data-lucide="message-circle" class="w-16 h-16 text-gray-700 mb-4"></i>
+      <p class="text-gray-400 font-medium">Chat tanlang</p>
+      <p class="text-gray-600 text-sm mt-1">Chap tomonda chat xonasini bosing</p>
+      <a href="../lost-devices.html"
+        class="mt-5 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 rounded-xl text-sm font-semibold transition flex items-center gap-2">
+        <i data-lucide="search" class="w-4 h-4"></i>
+        Yo'qolgan qurilmalarni ko'rish
+      </a>
+    </div>
+
+    <!-- Active room -->
+    <div id="activeRoom" class="hidden flex-1 flex flex-col">
+
+      <!-- Room header -->
+      <div class="px-5 py-3 border-b border-gray-800 flex items-center gap-3">
+        <div class="w-9 h-9 bg-blue-600/20 border border-blue-700/30 rounded-xl flex items-center justify-center">
+          <i data-lucide="smartphone" class="w-4 h-4 text-blue-400" id="roomDeviceIcon"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="font-semibold text-sm truncate" id="roomDeviceName">—</div>
+          <div class="text-gray-500 text-xs" id="roomOtherName">—</div>
+        </div>
+        <div id="roomBadge" class="hidden text-xs px-2.5 py-1 rounded-full border"></div>
+      </div>
+
+      <!-- Messages -->
+      <div id="msgList" class="flex-1 overflow-y-auto px-4 py-4 space-y-2">
+        <div class="text-center py-8 text-gray-600" id="msgLoading">
+          <i data-lucide="loader-2" class="w-5 h-5 mx-auto animate-spin"></i>
+        </div>
+      </div>
+
+      <!-- Input -->
+      <div class="px-4 py-3 border-t border-gray-800 flex gap-2">
+        <input id="msgInput" placeholder="Xabar yozing..."
+          class="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition"
+          onkeydown="if(event.key==='Enter' && !event.shiftKey){ event.preventDefault(); sendMsg(); }"/>
+        <button onclick="sendMsg()" id="sendBtn"
+          class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 rounded-xl transition flex items-center gap-1.5 text-sm font-semibold">
+          <i data-lucide="send" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('navbar').innerHTML = buildNavbar({ prefix: '../' });
+lucide.createIcons();
+if (!requireAuth()) throw '';
+
+const ME = getUser();
+const params = new URLSearchParams(location.search);
+let currentRoomId = params.get('room') || null;
+let pollTimer = null;
+let lastMsgCount = 0;
+
+const CAT_ICON = { phone:'smartphone', laptop:'laptop', tablet:'tablet', watch:'watch', headphones:'headphones', camera:'camera', other:'package' };
+
+// ── Room list ───────────────────────────────────────────────
+async function loadRooms() {
+  const res = await fetch(`${API}/chat/rooms`, { headers: authHeaders() });
+  if (res.status === 401) { logout(); return; }
+  const rooms = res.ok ? await res.json() : [];
+  const el = document.getElementById('roomList');
+
+  if (!rooms.length) {
+    el.innerHTML = `<div class="text-center py-8 text-gray-600 text-xs px-3">
+      Hali chat yo'q.<br/>
+      <a href="../lost-devices.html" class="text-blue-400 hover:underline mt-1 block">Yo'qolgan qurilmalarni ko'ring →</a>
+    </div>`;
+    return;
+  }
+
+  el.innerHTML = rooms.map(r => {
+    const active = r.id === currentRoomId;
+    const unreadBadge = r.unread > 0
+      ? `<span class="w-5 h-5 bg-blue-600 rounded-full text-xs flex items-center justify-center flex-shrink-0">${r.unread}</span>` : '';
+    const icon = CAT_ICON[r.device_category] || 'package';
+    return `
+    <button onclick="openRoom('${r.id}')"
+      class="w-full px-4 py-3 flex gap-3 items-start text-left transition border-b border-gray-800/50 ${active ? 'bg-blue-900/20' : 'hover:bg-gray-800/50'}">
+      <div class="w-9 h-9 bg-gray-800 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
+        <i data-lucide="${icon}" class="w-4 h-4 text-gray-400"></i>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center justify-between gap-1">
+          <span class="font-medium text-sm truncate">${r.device_name}</span>
+          ${unreadBadge}
+        </div>
+        <div class="text-gray-500 text-xs truncate">${r.other_name}</div>
+        ${r.last_message ? `<div class="text-gray-600 text-xs truncate mt-0.5">${r.last_message}</div>` : ''}
+      </div>
+    </button>`;
+  }).join('');
+  lucide.createIcons();
+
+  if (currentRoomId) openRoom(currentRoomId);
+}
+
+// ── Open room ───────────────────────────────────────────────
+async function openRoom(roomId) {
+  currentRoomId = roomId;
+  history.replaceState({}, '', `?room=${roomId}`);
+  clearInterval(pollTimer);
+  document.getElementById('noRoom').classList.add('hidden');
+  document.getElementById('activeRoom').classList.remove('hidden');
+  document.getElementById('msgLoading').classList.remove('hidden');
+
+  // Room info
+  const res = await fetch(`${API}/chat/rooms/${roomId}`, { headers: authHeaders() });
+  if (!res.ok) return;
+  const room = await res.json();
+  const icon = CAT_ICON[room.device_category] || 'package';
+
+  document.getElementById('roomDeviceIcon').setAttribute('data-lucide', icon);
+  document.getElementById('roomDeviceName').textContent = room.device_name + ' · ' + room.device_brand;
+  document.getElementById('roomOtherName').textContent = room.is_owner
+    ? `🔍 ${room.finder_name} (topgan kishi)`
+    : `👤 ${room.owner_name} (egasi)`;
+
+  const badge = document.getElementById('roomBadge');
+  if (room.is_owner) {
+    badge.className = 'text-xs px-2.5 py-1 rounded-full border bg-green-900/30 border-green-700/40 text-green-400';
+    badge.textContent = 'Sizning qurilmangiz';
+    badge.classList.remove('hidden');
+  } else {
+    badge.className = 'text-xs px-2.5 py-1 rounded-full border bg-blue-900/30 border-blue-700/40 text-blue-400';
+    badge.textContent = 'Topgan sifatida';
+    badge.classList.remove('hidden');
+  }
+  lucide.createIcons();
+
+  // Load messages
+  await loadMessages(roomId);
+  loadRooms(); // refresh unread counts
+  pollTimer = setInterval(() => loadMessages(roomId), 3000);
+}
+
+// ── Messages ────────────────────────────────────────────────
+async function loadMessages(roomId) {
+  const res = await fetch(`${API}/chat/rooms/${roomId}/messages`, { headers: authHeaders() });
+  if (!res.ok) return;
+  const msgs = await res.json();
+  if (msgs.length === lastMsgCount) return;
+  lastMsgCount = msgs.length;
+
+  const el = document.getElementById('msgList');
+  document.getElementById('msgLoading').classList.add('hidden');
+
+  if (!msgs.length) {
+    el.innerHTML = `<div class="text-center py-8 text-gray-600 text-xs">Hali xabar yo'q. Birinchi bo'lib yozing!</div>`;
+    return;
+  }
+
+  let lastDate = '';
+  el.innerHTML = msgs.map(m => {
+    const isMe = m.sender_id === ME.id;
+    const time = new Date(m.created_at).toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit' });
+    const dateStr = new Date(m.created_at).toLocaleDateString('uz-UZ');
+    const dateSep = dateStr !== lastDate
+      ? `<div class="text-center text-xs text-gray-600 my-2">${dateStr}</div>` : '';
+    lastDate = dateStr;
+    return `${dateSep}
+    <div class="flex ${isMe ? 'justify-end' : 'justify-start'}">
+      <div class="max-w-xs lg:max-w-sm">
+        ${!isMe ? `<div class="text-xs text-gray-500 mb-1 ml-1">${m.sender_name}</div>` : ''}
+        <div class="${isMe ? 'msg-out text-white' : 'msg-in text-white'} px-4 py-2.5 text-sm break-words">
+          ${escHtml(m.content)}
+        </div>
+        <div class="flex items-center gap-1 mt-0.5 ${isMe ? 'justify-end' : 'justify-start'}">
+          <span class="text-xs text-gray-600">${time}</span>
+          ${isMe ? `<i data-lucide="${m.is_read ? 'check-check' : 'check'}" class="w-3 h-3 ${m.is_read ? 'text-blue-400' : 'text-gray-600'}"></i>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  lucide.createIcons();
+  el.scrollTop = el.scrollHeight;
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br/>');
+}
+
+// ── Send ────────────────────────────────────────────────────
+async function sendMsg() {
+  const input = document.getElementById('msgInput');
+  const content = input.value.trim();
+  if (!content || !currentRoomId) return;
+  input.value = '';
+  input.focus();
+  const res = await fetch(`${API}/chat/rooms/${currentRoomId}/messages`, {
+    method: 'POST', headers: authHeaders(), body: JSON.stringify({ content })
+  });
+  if (res.ok) await loadMessages(currentRoomId);
+}
+
+loadRooms();
+</script>
+</body>
+</html>

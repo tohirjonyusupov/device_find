@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Obuna — DeviceGuard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/theme.css"/>
+  <script src="https://unpkg.com/lucide@0.383.0/dist/umd/lucide.min.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/app.js"></script>
+</head>
+<body class="bg-gray-950 text-white min-h-screen">
+<div id="navbar"></div>
+<div class="max-w-2xl mx-auto px-4 py-8">
+  <h1 class="text-2xl font-bold mb-1">Obuna</h1>
+  <p class="text-gray-500 text-sm mb-6">Rejimingizni boshqaring</p>
+
+  <div id="sentBanner" class="hidden bg-green-900/40 border border-green-700/50 text-green-300 rounded-xl px-4 py-3 mb-4 flex items-center gap-2">
+    <i data-lucide="check-circle" class="w-4 h-4 flex-shrink-0"></i>
+    <span>So'rovingiz yuborildi! Admin tez orada ko'rib chiqadi.</span>
+  </div>
+
+  <div id="loading" class="text-center py-16 text-gray-600">
+    <i data-lucide="loader-2" class="w-7 h-7 mx-auto animate-spin mb-2"></i>
+  </div>
+
+  <div id="content" class="hidden space-y-4">
+    <!-- Plan card -->
+    <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5">
+      <div class="flex items-center justify-between mb-4">
+        <span class="text-sm text-gray-400 font-medium">Joriy rejim</span>
+        <span id="planBadge"></span>
+      </div>
+      <div class="flex items-end justify-between mb-3">
+        <div>
+          <div class="text-3xl font-bold" id="countDisplay">—</div>
+          <div class="text-gray-500 text-xs mt-0.5" id="limitLabel">—</div>
+        </div>
+        <div id="proDateWrap" class="hidden text-right text-sm">
+          <div class="text-gray-500 text-xs">Tugaydi</div>
+          <div class="font-semibold text-yellow-400" id="endDate">—</div>
+        </div>
+      </div>
+      <div class="w-full bg-gray-800 rounded-full h-1.5">
+        <div id="usageBar" class="h-1.5 rounded-full bg-blue-500 transition-all" style="width:0%"></div>
+      </div>
+    </div>
+
+    <!-- FREE section -->
+    <div id="freeSection" class="hidden space-y-4">
+      <!-- Big upgrade card -->
+      <div class="bg-gradient-to-br from-blue-900/50 to-gray-900 border border-blue-700/50 rounded-2xl p-6">
+        <div class="flex items-center gap-3 mb-5">
+          <div class="w-12 h-12 bg-blue-600/20 rounded-xl flex items-center justify-center">
+            <i data-lucide="zap" class="w-6 h-6 text-blue-400"></i>
+          </div>
+          <div>
+            <div class="font-bold text-lg">PRO ga o'ting</div>
+            <div class="text-blue-300 text-sm">10 ta qurilma · $4.99/oy</div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3 mb-5 text-sm">
+          <div class="bg-gray-800/80 rounded-xl p-3 text-center">
+            <div class="text-gray-500 text-xs mb-1">Bepul</div>
+            <div class="font-bold text-white">3 qurilma</div>
+            <div class="text-gray-500 text-xs mt-0.5">$0/oy</div>
+          </div>
+          <div class="bg-blue-900/40 border border-blue-700/40 rounded-xl p-3 text-center">
+            <div class="text-blue-400 text-xs mb-1">PRO ⭐</div>
+            <div class="font-bold text-white">10 qurilma</div>
+            <div class="text-blue-300 text-xs mt-0.5">$4.99/oy</div>
+          </div>
+        </div>
+        <a href="https://t.me/abdumuratov_m" target="_blank"
+          class="flex items-center justify-center gap-2 w-full py-3.5 bg-blue-600 hover:bg-blue-700 rounded-xl font-semibold transition">
+          <i data-lucide="send" class="w-4 h-4"></i>
+          Telegram orqali PRO olish — @abdumuratov_m
+        </a>
+        <p class="text-center text-xs text-gray-600 mt-2">Telegram da yozing, to'lov qiling, admin faollashtiradi</p>
+      </div>
+
+      <!-- Instructions -->
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5">
+        <div class="font-semibold text-sm mb-4 flex items-center gap-2">
+          <i data-lucide="list-ordered" class="w-4 h-4 text-blue-400"></i>
+          Qanday ishlaydi?
+        </div>
+        <ol class="space-y-3">
+          <li class="flex gap-3 text-sm text-gray-300">
+            <span class="w-6 h-6 rounded-full bg-blue-600 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
+            <span><a href="https://t.me/abdumuratov_m" target="_blank" class="text-blue-400 font-semibold hover:underline">@abdumuratov_m</a> ga Telegram da xabar yuboring: <span class="bg-gray-800 px-1.5 py-0.5 rounded text-xs font-mono">PRO sotib olmoqchiman</span></span>
+          </li>
+          <li class="flex gap-3 text-sm text-gray-300">
+            <span class="w-6 h-6 rounded-full bg-blue-600 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
+            <span>Admin sizga karta raqamini yuboradi</span>
+          </li>
+          <li class="flex gap-3 text-sm text-gray-300">
+            <span class="w-6 h-6 rounded-full bg-blue-600 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
+            <span><strong class="text-white">$4.99</strong> (≈ 63,000 so'm) o'tkazing va to'lov chekini yuboring</span>
+          </li>
+          <li class="flex gap-3 text-sm text-gray-300">
+            <span class="w-6 h-6 rounded-full bg-blue-600 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">4</span>
+            <span>Quyidagi tugmani bosib izoh kiriting</span>
+          </li>
+          <li class="flex gap-3 text-sm text-gray-300">
+            <span class="w-6 h-6 rounded-full bg-green-600 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">✓</span>
+            <span>Admin tasdiqlagandan so'ng <strong class="text-green-400">PRO avtomatik faollashadi</strong> 🎉</span>
+          </li>
+        </ol>
+      </div>
+
+      <!-- Already paid -->
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5">
+        <div class="font-semibold text-sm mb-1">To'lov qildingizmi?</div>
+        <p class="text-gray-500 text-xs mb-3">To'lovni amalga oshirgandan so'ng quyida so'rov yuboring.</p>
+        <div id="pendingWarn" class="hidden bg-yellow-900/30 border border-yellow-700/40 text-yellow-300 text-xs rounded-xl px-3 py-2 mb-3 flex items-center gap-2">
+          <i data-lucide="clock" class="w-3.5 h-3.5 flex-shrink-0"></i>
+          Sizning so'rovingiz admin tomonidan ko'rib chiqilmoqda. Iltimos kuting.
+        </div>
+        <textarea id="payNote" rows="2" placeholder="Misol: Payme orqali 14:32 da to'ladim..."
+          class="w-full bg-gray-800 border border-gray-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition resize-none mb-3"></textarea>
+        <button onclick="submitPayment()" id="payBtn"
+          class="w-full py-2.5 bg-green-600 hover:bg-green-700 disabled:opacity-50 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2">
+          <i data-lucide="check-circle" class="w-4 h-4"></i>
+          <span id="payBtnTxt">To'lov qildim — So'rov yuborish</span>
+        </button>
+        <p class="text-xs text-gray-600 mt-2 text-center">24 soat ichida ko'rib chiqiladi</p>
+      </div>
+    </div>
+
+    <!-- PRO section -->
+    <div id="proSection" class="hidden bg-gray-900 border border-gray-800 rounded-2xl p-5">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-yellow-500/20 rounded-xl flex items-center justify-center">
+          <i data-lucide="crown" class="w-5 h-5 text-yellow-400"></i>
+        </div>
+        <div>
+          <div class="font-semibold">PRO obuna faol ✨</div>
+          <div class="text-gray-500 text-xs mt-0.5">10 ta qurilmangizni himoya qilishingiz mumkin</div>
+        </div>
+      </div>
+      <div class="mt-4 pt-4 border-t border-gray-800 text-sm">
+        <p class="text-gray-500 text-xs">Obunani bekor qilish yoki savol uchun:</p>
+        <a href="https://t.me/abdumuratov_m" target="_blank"
+          class="inline-flex items-center gap-1.5 mt-2 text-blue-400 hover:text-blue-300 text-sm">
+          <i data-lucide="send" class="w-3.5 h-3.5"></i>
+          @abdumuratov_m ga yozish
+        </a>
+      </div>
+    </div>
+
+    <!-- History -->
+    <div id="histWrap" class="hidden">
+      <div class="text-sm text-gray-400 font-medium mb-3">To'lov tarixi</div>
+      <div id="histList" class="space-y-2"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('navbar').innerHTML = buildNavbar({ prefix: '../' });
+lucide.createIcons();
+if (!requireAuth()) throw '';
+
+const params = new URLSearchParams(location.search);
+if (params.get('sent') === 'true') {
+  document.getElementById('sentBanner').classList.remove('hidden');
+  history.replaceState({}, '', location.pathname);
+}
+
+async function init() {
+  try {
+    const [subRes, reqRes] = await Promise.all([
+      fetch(`${API}/subscription`, { headers: authHeaders() }),
+      fetch(`${API}/payment/request/my`, { headers: authHeaders() }),
+    ]);
+    if (subRes.status === 401) { logout(); return; }
+    const sub = await subRes.json();
+    const reqs = reqRes.ok ? await reqRes.json() : [];
+
+    document.getElementById('loading').classList.add('hidden');
+    document.getElementById('content').classList.remove('hidden');
+
+    const { plan, device_count: cnt, device_limit: lim } = sub;
+
+    // Badge
+    document.getElementById('planBadge').innerHTML = plan === 'pro'
+      ? `<span class="bg-yellow-500/20 border border-yellow-500/40 text-yellow-400 text-xs font-bold px-2.5 py-1 rounded-full">⭐ PRO</span>`
+      : `<span class="bg-gray-800 border border-gray-700 text-gray-400 text-xs font-bold px-2.5 py-1 rounded-full">FREE</span>`;
+
+    document.getElementById('countDisplay').textContent = lim ? `${cnt} / ${lim}` : `${cnt}`;
+    document.getElementById('limitLabel').textContent = plan === 'pro' ? '10 ta qurilma (PRO)' : '3 ta qurilma (Bepul)';
+
+    const pct = lim ? Math.min(100, (cnt / lim) * 100) : 0;
+    const bar = document.getElementById('usageBar');
+    bar.style.width = pct + '%';
+    bar.className = `h-1.5 rounded-full transition-all ${pct >= 80 ? 'bg-red-500' : pct >= 60 ? 'bg-yellow-500' : 'bg-blue-500'}`;
+
+    if (plan === 'pro') {
+      if (sub.end_date) {
+        document.getElementById('proDateWrap').classList.remove('hidden');
+        document.getElementById('endDate').textContent = new Date(sub.end_date).toLocaleDateString('uz-UZ');
+      }
+      document.getElementById('proSection').classList.remove('hidden');
+    } else {
+      document.getElementById('freeSection').classList.remove('hidden');
+      const pending = reqs.find(r => r.status === 'pending');
+      if (pending) {
+        document.getElementById('pendingWarn').classList.remove('hidden');
+        const btn = document.getElementById('payBtn');
+        btn.disabled = true;
+      }
+    }
+
+    if (reqs.length) {
+      document.getElementById('histWrap').classList.remove('hidden');
+      document.getElementById('histList').innerHTML = reqs.map(r => {
+        const cfg = {
+          pending:  ['bg-yellow-900/40 text-yellow-400 border-yellow-700/40', '⏳ Kutilmoqda'],
+          approved: ['bg-green-900/40 text-green-400 border-green-700/40',   '✅ Tasdiqlandi'],
+          rejected: ['bg-red-900/40 text-red-400 border-red-700/40',         '❌ Rad etildi'],
+        }[r.status] || ['bg-gray-800 text-gray-400 border-gray-700', r.status];
+        return `<div class="flex items-center justify-between p-3 bg-gray-900 border border-gray-800 rounded-xl text-sm">
+          <div>
+            <div class="font-medium">$4.99</div>
+            <div class="text-gray-500 text-xs mt-0.5">${new Date(r.created_at).toLocaleString('uz-UZ')}</div>
+            ${r.note ? `<div class="text-gray-400 text-xs mt-0.5 italic">"${r.note}"</div>` : ''}
+            ${r.admin_note ? `<div class="text-blue-400 text-xs mt-0.5">Admin: ${r.admin_note}</div>` : ''}
+          </div>
+          <span class="text-xs px-2 py-1 rounded-full border ${cfg[0]}">${cfg[1]}</span>
+        </div>`;
+      }).join('');
+    }
+  } catch {
+    document.getElementById('loading').innerHTML = `<p class="text-red-400 text-center text-sm">Server bilan ulanib bo'lmadi.</p>`;
+  }
+}
+
+async function submitPayment() {
+  const note = document.getElementById('payNote').value.trim();
+  const btn = document.getElementById('payBtn');
+  btn.disabled = true;
+  document.getElementById('payBtnTxt').textContent = 'Yuborilmoqda...';
+  try {
+    const res = await fetch(`${API}/payment/request`, {
+      method: 'POST', headers: authHeaders(),
+      body: JSON.stringify({ note: note || null })
+    });
+    const data = await res.json();
+    if (!res.ok) { alert(data.detail || 'Xato'); btn.disabled = false; return; }
+    location.href = 'subscription.html?sent=true';
+  } catch { alert("Server bilan ulanib bo'lmadi"); btn.disabled = false; }
+  document.getElementById('payBtnTxt').textContent = "To'lov qildim — So'rov yuborish";
+}
+
+init();
+</script>
+</body>
+</html>

@@ -2,20 +2,24 @@ import uuid
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
-from database import engine, Base, AsyncSessionLocal
-from routes import auth, devices, subscription, payment, chat
+
+# ✅ FIX: absolute imports (Render uchun shart)
+from backend.database import engine, Base, AsyncSessionLocal
+from backend.routes import auth, devices, subscription, payment, chat
 
 
 async def _seed_admin():
     """Birinchi ishga tushishda admin avtomatik yaratiladi"""
     from sqlalchemy import select
-    from models import User, Subscription, UserRole, SubscriptionPlan, SubscriptionStatus
-    from auth_utils import hash_password
+    from backend.models import User, Subscription, UserRole, SubscriptionPlan, SubscriptionStatus
+    from backend.auth_utils import hash_password
 
     async with AsyncSessionLocal() as db:
-        existing = await db.execute(select(User).where(User.email == "admin@deviceguard.com"))
+        existing = await db.execute(
+            select(User).where(User.email == "admin@deviceguard.com")
+        )
         if existing.scalar_one_or_none():
-            return  # Allaqachon bor
+            return
 
         admin = User(
             id=str(uuid.uuid4()),
@@ -24,14 +28,19 @@ async def _seed_admin():
             password_hash=hash_password("Admin1234!"),
             role=UserRole.admin,
         )
+
         db.add(admin)
         await db.flush()
-        db.add(Subscription(
-            id=str(uuid.uuid4()),
-            user_id=admin.id,
-            plan=SubscriptionPlan.pro,
-            status=SubscriptionStatus.active,
-        ))
+
+        db.add(
+            Subscription(
+                id=str(uuid.uuid4()),
+                user_id=admin.id,
+                plan=SubscriptionPlan.pro,
+                status=SubscriptionStatus.active,
+            )
+        )
+
         await db.commit()
         print("✅ Admin yaratildi: admin@deviceguard.com / Admin1234!")
 
@@ -40,6 +49,7 @@ async def _seed_admin():
 async def lifespan(app: FastAPI):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+
     await _seed_admin()
     yield
 
@@ -54,11 +64,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(auth.router,         prefix="/auth",         tags=["Auth"])
-app.include_router(devices.router,      prefix="/devices",      tags=["Devices"])
+app.include_router(auth.router, prefix="/auth", tags=["Auth"])
+app.include_router(devices.router, prefix="/devices", tags=["Devices"])
 app.include_router(subscription.router, prefix="/subscription", tags=["Subscription"])
-app.include_router(payment.router,      prefix="/payment",      tags=["Payment"])
-app.include_router(chat.router,         prefix="/chat",         tags=["Chat"])
+app.include_router(payment.router, prefix="/payment", tags=["Payment"])
+app.include_router(chat.router, prefix="/chat", tags=["Chat"])
 
 
 @app.get("/")

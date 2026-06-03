@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
-from database import get_db
-from models import User, Device, Subscription, SubscriptionPlan
-from auth_utils import get_current_user
+from backend.database import get_db
+from backend.models import User, Device, Subscription, SubscriptionPlan
+from backend.auth_utils import get_current_user
 
 router = APIRouter()
 FREE_LIMIT = 3

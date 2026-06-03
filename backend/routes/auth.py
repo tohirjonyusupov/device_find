@@ -3,9 +3,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from pydantic import BaseModel, EmailStr
-from database import get_db
-from models import User, Subscription, SubscriptionPlan, SubscriptionStatus
-from auth_utils import hash_password, verify_password, create_token, get_current_user
+from backend.database import get_db
+from backend.models import User, Subscription, SubscriptionPlan, SubscriptionStatus
+from backend.auth_utils import hash_password, verify_password, create_token, get_current_user
 
 router = APIRouter()
 

@@ -4,9 +4,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 from pydantic import BaseModel
-from database import get_db
-from models import User, Device, DeviceCategory, DeviceStatus, Subscription, SubscriptionPlan
-from auth_utils import get_current_user
+from backend.database import get_db
+from backend.models import User, Device, DeviceCategory, DeviceStatus, Subscription, SubscriptionPlan
+from backend.auth_utils import get_current_user
 
 router = APIRouter()
 FREE_LIMIT = 3

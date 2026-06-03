@@ -8,5 +8,5 @@ const API = (function() {
     return 'http://localhost:8000';
   }
   // Production: Railway backend URL (deploy qilgandan keyin o'zgartiriladi)
-  return 'https://device-finder-production.up.railway.app';
+  return 'https://device-find.onrender.com';
 })();

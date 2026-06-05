@@ -28,7 +28,7 @@ def user_response(user: User, token: str | None = None):
         "full_name": user.full_name,
         "email": user.email,
         "phone": user.phone,
-        "role": "admin",
+        "role": user.role,
         "created_at": user.created_at.isoformat(),
         "plan": user.subscription.plan if user.subscription else "free",
     }

@@ -12,7 +12,7 @@ router = APIRouter()
 
 TELEGRAM_USERNAME = "@abdumuratov_m"
 PRICE_UZS = 49900
-PRICE_USD = 4.99
+PRICE_USD = 1.99
 PRO_DURATION_DAYS = 30
 
 

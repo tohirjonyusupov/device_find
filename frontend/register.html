@@ -1,99 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ro'yxatdan o'tish — DeviceGuard</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="css/theme.css"/>
+  <link rel="stylesheet" href="css/theme.css" />
   <script src="https://unpkg.com/lucide@0.383.0/dist/umd/lucide.min.js"></script>
   <script src="js/config.js"></script>
   <script src="js/app.js"></script>
 </head>
+
 <body class="bg-gray-950 text-white min-h-screen flex items-center justify-center px-4 py-10">
-<div class="w-full max-w-sm">
-  <div id="topbar" class="mb-6"></div>
-  <div class="text-center mb-5">
-    <div class="flex items-center justify-center gap-2 font-bold text-xl mb-1">
-      <i data-lucide="shield-check" class="w-6 h-6 text-blue-500"></i>
-      DeviceGuard
+  <div class="w-full max-w-sm">
+    <div id="topbar" class="mb-6"></div>
+    <div class="text-center mb-5">
+      <div class="flex items-center justify-center gap-2 font-bold text-xl mb-1">
+        <i data-lucide="shield-check" class="w-6 h-6 text-blue-500"></i>
+        DeviceGuard
+      </div>
+      <p class="text-gray-500 text-sm">Hisob yarating — bepul</p>
     </div>
-    <p class="text-gray-500 text-sm">Hisob yarating — bepul</p>
-  </div>
 
-  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6">
-    <div id="errMsg" class="hidden bg-red-900/40 border border-red-700/50 text-red-300 text-sm rounded-xl px-4 py-3 mb-4"></div>
-    <form onsubmit="handleRegister(event)" class="space-y-3">
-      <div>
-        <label class="text-xs text-gray-500 mb-1 block">To'liq ism *</label>
-        <input id="full_name" required placeholder="Asilbek Ilhomov"
-          class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition"/>
-      </div>
-      <div>
-        <label class="text-xs text-gray-500 mb-1 block">Email *</label>
-        <input id="email" type="email" required placeholder="siz@email.com"
-          class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition"/>
-      </div>
-      <div>
-        <label class="text-xs text-gray-500 mb-1 block">Telefon (ixtiyoriy)</label>
-        <input id="phone" placeholder="+998 90 000 00 00"
-          class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition"/>
-      </div>
-      <div>
-        <label class="text-xs text-gray-500 mb-1 block">Parol * <span class="text-gray-600">(kamida 6 ta belgi)</span></label>
-        <input id="password" type="password" required minlength="6" placeholder="••••••••"
-          class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition"/>
-      </div>
-      <button type="submit" id="regBtn"
-        class="w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-xl text-sm font-semibold transition mt-1">
-        Ro'yxatdan o'tish
-      </button>
-    </form>
-    <p class="text-center text-gray-500 text-xs mt-4">
-      Hisobingiz bormi? <a href="login.html" class="text-blue-400 hover:underline">Kiring</a>
-    </p>
-  </div>
+    <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+      <div id="errMsg"
+        class="hidden bg-red-900/40 border border-red-700/50 text-red-300 text-sm rounded-xl px-4 py-3 mb-4"></div>
+      <form onsubmit="handleRegister(event)" class="space-y-3">
+        <div>
+          <label class="text-xs text-gray-500 mb-1 block">To'liq ism *</label>
+          <input id="full_name" required placeholder="Asilbek Ilhomov"
+            class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition" />
+        </div>
+        <div>
+          <label class="text-xs text-gray-500 mb-1 block">Email *</label>
+          <input id="email" type="email" required placeholder="siz@email.com"
+            class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition" />
+        </div>
+        <div>
+          <label class="text-xs text-gray-500 mb-1 block">Telefon (ixtiyoriy)</label>
+          <input id="phone" placeholder="+998 90 000 00 00"
+            class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition" />
+        </div>
+        <div>
+          <label class="text-xs text-gray-500 mb-1 block">Parol * <span class="text-gray-600">(kamida 6 ta
+              belgi)</span></label>
+          <input id="password" type="password" required minlength="6" placeholder="••••••••"
+            class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition" />
+        </div>
+        <button type="submit" id="regBtn"
+          class="w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-xl text-sm font-semibold transition mt-1">
+          Ro'yxatdan o'tish
+        </button>
+      </form>
+      <p class="text-center text-gray-500 text-xs mt-4">
+        Hisobingiz bormi? <a href="login.html" class="text-blue-400 hover:underline">Kiring</a>
+      </p>
+    </div>
 
-  <!-- Plan comparison -->
-  <div class="mt-4 bg-gray-900/50 border border-gray-800 rounded-2xl p-4 text-xs text-gray-500">
-    <div class="grid grid-cols-2 gap-3 text-center">
-      <div><div class="font-semibold text-white mb-1">Bepul</div><div>3 ta qurilma</div><div class="text-green-400 mt-0.5">$0/oy</div></div>
-      <div><div class="font-semibold text-yellow-400 mb-1">⭐ PRO</div><div>10 ta qurilma</div><div class="text-blue-400 mt-0.5">$4.99/oy</div></div>
+    <!-- Plan comparison -->
+    <div class="mt-4 bg-gray-900/50 border border-gray-800 rounded-2xl p-4 text-xs text-gray-500">
+      <div class="grid grid-cols-2 gap-3 text-center">
+        <div>
+          <div class="font-semibold text-white mb-1">Bepul</div>
+          <div>3 ta qurilma</div>
+          <div class="text-green-400 mt-0.5">$0/oy</div>
+        </div>
+        <div>
+          <div class="font-semibold text-yellow-400 mb-1">⭐ PRO</div>
+          <div>10 ta qurilma</div>
+          <div class="text-blue-400 mt-0.5">$1.99/oy</div>
+        </div>
+      </div>
     </div>
   </div>
-</div>
 
-<script>
-document.getElementById('topbar').innerHTML = `<div class="flex justify-end gap-2">
-  ${['uz','en','ru'].map(l=>`<button onclick="setLang('${l}')" class="px-2.5 py-1 text-xs rounded-lg ${l===getLang()?'bg-blue-600 text-white':'bg-gray-800 text-gray-400 hover:bg-gray-700'} transition">${l.toUpperCase()}</button>`).join('')}
+  <script>
+    document.getElementById('topbar').innerHTML = `<div class="flex justify-end gap-2">
+  ${['uz', 'en', 'ru'].map(l => `<button onclick="setLang('${l}')" class="px-2.5 py-1 text-xs rounded-lg ${l === getLang() ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'} transition">${l.toUpperCase()}</button>`).join('')}
   <button onclick="toggleTheme()" data-theme-icon class="p-1.5 text-gray-400 hover:text-white rounded-lg hover:bg-gray-800 transition"></button>
 </div>`;
-lucide.createIcons();
-if (getToken()) location.href = 'dashboard/index.html';
+    lucide.createIcons();
+    if (getToken()) location.href = 'dashboard/index.html';
 
-async function handleRegister(e) {
-  e.preventDefault();
-  const btn = document.getElementById('regBtn');
-  const err = document.getElementById('errMsg');
-  btn.disabled = true; btn.textContent = 'Ro\'yxatdan o\'tilmoqda...';
-  err.classList.add('hidden');
-  try {
-    const res = await fetch(`${API}/auth/register`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        full_name: document.getElementById('full_name').value,
-        email: document.getElementById('email').value,
-        password: document.getElementById('password').value,
-        phone: document.getElementById('phone').value || null,
-      })
-    });
-    const data = await res.json();
-    if (!res.ok) { err.textContent = data.detail || 'Xato yuz berdi'; err.classList.remove('hidden'); return; }
-    localStorage.setItem('dg_token', data.token);
-    localStorage.setItem('dg_user', JSON.stringify(data));
-    location.href = 'dashboard/index.html';
-  } catch { err.textContent = "Server bilan ulanib bo'lmadi"; err.classList.remove('hidden'); }
-  btn.disabled = false; btn.textContent = "Ro'yxatdan o'tish";
-}
-</script>
+    async function handleRegister(e) {
+      e.preventDefault();
+      const btn = document.getElementById('regBtn');
+      const err = document.getElementById('errMsg');
+      btn.disabled = true; btn.textContent = 'Ro\'yxatdan o\'tilmoqda...';
+      err.classList.add('hidden');
+      try {
+        const res = await fetch(`${API}/auth/register`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            full_name: document.getElementById('full_name').value,
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value,
+            phone: document.getElementById('phone').value || null,
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) { err.textContent = data.detail || 'Xato yuz berdi'; err.classList.remove('hidden'); return; }
+        localStorage.setItem('dg_token', data.token);
+        localStorage.setItem('dg_user', JSON.stringify(data));
+        location.href = 'dashboard/index.html';
+      } catch { err.textContent = "Server bilan ulanib bo'lmadi"; err.classList.remove('hidden'); }
+      btn.disabled = false; btn.textContent = "Ro'yxatdan o'tish";
+    }
+  </script>
 </body>
+
 </html>
